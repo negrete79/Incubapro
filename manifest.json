@@ -1,0 +1,21 @@
+{
+  "name": "Incubadora Avícola - Sistema Inteligente",
+  "short_name": "IncubaPRO",
+  "description": "Sistema inteligente para controle de incubadoras avícolas",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1a237e",
+  "theme_color": "#1a237e",
+  "icons": [
+    {
+      "src": "png292.png",
+      "sizes": "292x292",
+      "type": "image/png"
+    },
+    {
+      "src": "png540.png",
+      "sizes": "540x540",
+      "type": "image/png"
+    }
+  ]
+}
