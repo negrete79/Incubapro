@@ -3,44 +3,517 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Incubadora Avícola - Sistema Inteligente</title>
-    <link rel="stylesheet" href="style.css">
+    <title>IncubadoraPRO</title>
+    <meta name="theme-color" content="#1565C0">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1a237e">
+    <link rel="icon" type="image/png" sizes="192x192" href="png192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="png512.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .app {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: #1565C0;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+            color: #FFD700;
+        }
+
+        .logo h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .install-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s;
+        }
+
+        .install-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .nav {
+            display: flex;
+            background: #0D47A1;
+            position: sticky;
+            top: 60px;
+            z-index: 99;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 0.8rem;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
+        }
+
+        .nav-btn.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-btn i {
+            font-size: 1rem;
+        }
+
+        .content {
+            padding: 1rem;
+            padding-bottom: 80px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            color: #1565C0;
+            font-weight: 600;
+        }
+
+        .temp-display {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .temp-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1565C0;
+            line-height: 1;
+        }
+
+        .temp-unit {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .temp-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .temp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF9800, #F44336);
+            width: 70%;
+            transition: width 0.5s;
+        }
+
+        .heartbeat {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .heart-icon {
+            color: #F44336;
+            font-size: 1.5rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.2); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.2); }
+            80% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .status-item i {
+            color: #1565C0;
+        }
+
+        .btn {
+            background: #1565C0;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #0D47A1;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #F44336;
+        }
+
+        .btn-danger:hover {
+            background: #D32F2F;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 350px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 2000;
+            max-width: 300px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .batch-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #1565C0;
+        }
+
+        .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .batch-title {
+            font-weight: 600;
+            color: #1565C0;
+        }
+
+        .batch-status {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .batch-info {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .batch-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #1565C0;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: #e3f2fd;
+        }
+
+        .icon-btn.delete:hover {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        .time {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 1rem;
+        }
+
+        .batch-details {
+            font-size: 0.9rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.5s;
+        }
+
+        @media (max-width: 400px) {
+            .app {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Cabeçalho -->
-        <header class="app-header">
+    <div class="app">
+        <header class="header">
             <div class="logo">
                 <i class="fas fa-egg"></i>
-                <h1>Incuba<span>PRO</span></h1>
+                <h1>Incubadora<span>PRO</span></h1>
             </div>
-            <div class="header-actions">
+            <div>
                 <button id="install-btn" class="install-btn">
                     <i class="fas fa-download"></i> Instalar
                 </button>
-                <div class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span>Online</span>
-                </div>
             </div>
         </header>
 
-        <!-- Navegação -->
-        <nav class="app-nav">
+        <div class="status">
+            <span class="status-dot"></span>
+            <span id="connection-status">Online</span>
+        </div>
+
+        <nav class="nav">
             <button class="nav-btn active" data-page="dashboard">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Painel</span>
             </button>
             <button class="nav-btn" data-page="batches">
-                <i class="fas fa-layer-group"></i>
+                <i class="fas fa-egg"></i>
                 <span>Lotes</span>
-            </button>
-            <button class="nav-btn" data-page="reminders">
-                <i class="fas fa-bell"></i>
-                <span>Lembretes</span>
             </button>
             <button class="nav-btn" data-page="settings">
                 <i class="fas fa-cog"></i>
@@ -48,84 +521,72 @@
             </button>
         </nav>
 
-        <!-- Conteúdo Principal -->
-        <main class="app-main">
+        <div class="content">
             <!-- Página: Painel -->
             <div id="dashboard" class="page active">
-                <div class="page-header">
-                    <h2>Painel de Controle</h2>
-                    <div class="current-time" id="current-time">--:--:--</div>
-                </div>
+                <div class="time" id="current-time">--:--:--</div>
                 
-                <div class="dashboard-grid">
-                    <div class="card temp-card">
-                        <div class="card-header">
-                            <h3>Temperatura</h3>
-                            <i class="fas fa-temperature-high"></i>
-                        </div>
-                        <div class="card-value">
-                            <span id="temp-value">--</span>
-                            <span class="unit">°C</span>
-                        </div>
-                        <div class="card-status">
-                            <div class="status-bar">
-                                <div class="status-fill temp-fill"></div>
-                            </div>
-                            <span>Ideal: <span id="ideal-temp">37.5</span>°C</span>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span>Temperatura</span>
+                        <i class="fas fa-temperature-high"></i>
                     </div>
-                    
-                    <div class="card humidity-card">
-                        <div class="card-header">
-                            <h3>Umidade</h3>
-                            <i class="fas fa-tint"></i>
+                    <div class="temp-display">
+                        <div class="temp-value">
+                            <span id="temp-value">37.5</span>
+                            <span class="temp-unit">°C</span>
                         </div>
-                        <div class="card-value">
-                            <span id="humidity-value">--</span>
-                            <span class="unit">%</span>
+                        <div class="temp-bar">
+                            <div class="temp-fill" id="temp-fill"></div>
                         </div>
-                        <div class="card-status">
-                            <div class="status-bar">
-                                <div class="status-fill humidity-fill"></div>
-                            </div>
-                            <span>Ideal: 55%</span>
-                        </div>
+                        <small>Ideal: <span id="ideal-temp">37.5</span>°C</small>
                     </div>
-                    
-                    <div class="card turn-card">
-                        <div class="card-header">
-                            <h3>Viragem</h3>
-                            <i class="fas fa-sync-alt"></i>
-                        </div>
-                        <div class="turn-status">
-                            <div class="turn-icon">
-                                <i class="fas fa-egg"></i>
-                            </div>
-                            <span id="turn-status">Aguardando</span>
-                        </div>
-                        <div class="turn-timer">
-                            Próxima: <span id="next-turn">--:--</span>
-                        </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span>Umidade</span>
+                        <i class="fas fa-tint"></i>
                     </div>
-                    
-                    <div class="card status-card">
-                        <div class="card-header">
-                            <h3>Status do Sistema</h3>
-                            <i class="fas fa-heartbeat"></i>
+                    <div class="temp-display">
+                        <div class="temp-value">
+                            <span id="humidity-value">55</span>
+                            <span class="temp-unit">%</span>
                         </div>
-                        <div class="status-list">
-                            <div class="status-item">
-                                <i class="fas fa-wifi"></i>
-                                <span>Conexão: <strong>OK</strong></span>
-                            </div>
-                            <div class="status-item">
-                                <i class="fas fa-battery-three-quarters"></i>
-                                <span>Energia: <strong>Estável</strong></span>
-                            </div>
-                            <div class="status-item">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>Segurança: <strong>Ativa</strong></span>
-                            </div>
+                        <div class="temp-bar">
+                            <div class="temp-fill" id="humidity-fill" style="background: linear-gradient(90deg, #2196F3, #03A9F4);"></div>
+                        </div>
+                        <small>Ideal: 55%</small>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span>Viragem</span>
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="heartbeat">
+                        <i class="fas fa-heart heart-icon"></i>
+                        <span id="turn-status">Aguardando</span>
+                    </div>
+                    <div style="text-align: center; color: #666; font-size: 0.9rem;">
+                        Próxima: <span id="next-turn">--:--</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span>Status do Sistema</span>
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <i class="fas fa-wifi"></i>
+                            <span>Conexão: <strong>OK</strong></span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span>Energia: <strong>Estável</strong></span>
                         </div>
                     </div>
                 </div>
@@ -133,142 +594,59 @@
             
             <!-- Página: Lotes -->
             <div id="batches" class="page">
-                <div class="page-header">
-                    <h2>Lotes de Ovos</h2>
-                    <button id="add-batch-btn" class="btn primary">
-                        <i class="fas fa-plus"></i> Novo Lote
-                    </button>
-                </div>
+                <button class="btn" onclick="openBatchModal()">
+                    <i class="fas fa-plus"></i> Novo Lote
+                </button>
                 
-                <div id="batches-container" class="batches-container">
+                <div id="batches-container">
                     <div class="empty-state">
                         <i class="fas fa-egg"></i>
                         <p>Nenhum lote cadastrado</p>
-                        <button class="btn primary empty-add-btn">Adicionar primeiro lote</button>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Página: Lembretes -->
-            <div id="reminders" class="page">
-                <div class="page-header">
-                    <h2>Próximos Lembretes</h2>
-                    <div class="filter-tabs">
-                        <button class="filter-btn active" data-filter="all">Todos</button>
-                        <button class="filter-btn" data-filter="today">Hoje</button>
-                        <button class="filter-btn" data-filter="week">Esta Semana</button>
-                    </div>
-                </div>
-                
-                <div class="reminders-container">
-                    <ul id="reminders-list" class="reminders-list">
-                        <li class="reminder-item">
-                            <div class="reminder-icon">
-                                <i class="fas fa-sync-alt"></i>
-                            </div>
-                            <div class="reminder-content">
-                                <h4>Virar ovos - Lote #1</h4>
-                                <p>Hoje, 14:00</p>
-                            </div>
-                            <div class="reminder-actions">
-                                <button class="btn-icon"><i class="fas fa-check"></i></button>
-                            </div>
-                        </li>
-                        <li class="reminder-item">
-                            <div class="reminder-icon">
-                                <i class="fas fa-thermometer-half"></i>
-                            </div>
-                            <div class="reminder-content">
-                                <h4>Verificar temperatura - Lote #2</h4>
-                                <p>Hoje, 18:00</p>
-                            </div>
-                            <div class="reminder-actions">
-                                <button class="btn-icon"><i class="fas fa-check"></i></button>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
             </div>
             
             <!-- Página: Configurações -->
             <div id="settings" class="page">
-                <div class="page-header">
-                    <h2>Configurações</h2>
+                <div class="card">
+                    <div class="card-header">
+                        <span>Notificações</span>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="temp-alerts" checked> Alertas de temperatura
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="turn-reminders" checked> Lembretes de viragem
+                        </label>
+                    </div>
                 </div>
                 
-                <div class="settings-container">
-                    <div class="settings-section">
-                        <h3>Notificações</h3>
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <h4>Alertas de Temperatura</h4>
-                                <p>Receber alertas quando a temperatura estiver fora do ideal</p>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="temp-alerts" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <h4>Lembretes de Viragem</h4>
-                                <p>Receber lembretes para virar os ovos</p>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="turn-reminders" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span>Dados</span>
                     </div>
-                    
-                    <div class="settings-section">
-                        <h3>Preferências</h3>
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <h4>Unidade de Temperatura</h4>
-                            </div>
-                            <select class="select-input" id="temp-unit">
-                                <option value="celsius">Celsius (°C)</option>
-                                <option value="fahrenheit">Fahrenheit (°F)</option>
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <h4>Frequência de Viragem</h4>
-                            </div>
-                            <select class="select-input" id="turn-frequency">
-                                <option value="2">A cada 2 horas</option>
-                                <option value="4">A cada 4 horas</option>
-                                <option value="8">A cada 8 horas</option>
-                            </select>
-                        </div>
-                    </div>
+                    <button class="btn btn-danger" onclick="clearData()">
+                        <i class="fas fa-trash"></i> Limpar todos os dados
+                    </button>
                 </div>
             </div>
-        </main>
-        
-        <!-- Rodapé -->
-        <footer class="app-footer">
-            <p>Desenvolvido por Elias Costa Negret's</p>
-            <div class="social-links">
-                <a href="#" class="social-link"><i class="fab fa-telegram-plane"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-            </div>
-        </footer>
+        </div>
     </div>
     
-    <!-- Modal: Adicionar/Editar Lote -->
+    <!-- Modal: Novo/Editar Lote -->
     <div id="batch-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title">Adicionar Novo Lote</h3>
-                <button class="close-modal">&times;</button>
+                <h3 id="modal-title">Novo Lote</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <form id="batch-form">
+            <form onsubmit="saveBatch(event)">
                 <input type="hidden" id="batch-id">
                 <div class="form-group">
-                    <label for="bird-type">Tipo de Ave</label>
+                    <label>Tipo de Ave</label>
                     <select id="bird-type" required>
                         <option value="">Selecione...</option>
                         <option value="chicken">🐔 Galinha</option>
@@ -281,69 +659,393 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="start-date">Data de Início</label>
+                    <label>Data de Início</label>
                     <input type="date" id="start-date" required>
                 </div>
                 <div class="form-group">
-                    <label for="egg-count">Quantidade de Ovos</label>
+                    <label>Quantidade de Ovos</label>
                     <input type="number" id="egg-count" min="1" required>
                 </div>
                 <div class="form-group">
-                    <label for="incubator">Incubadora</label>
-                    <select id="incubator">
-                        <option value="1">Incubadora #1</option>
-                        <option value="2">Incubadora #2</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="notes">Observações</label>
-                    <textarea id="notes" rows="3" placeholder="Informações adicionais..."></textarea>
+                    <label>Observações</label>
+                    <textarea id="notes" rows="2"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn secondary cancel-btn">Cancelar</button>
-                    <button type="submit" class="btn primary">Salvar Lote</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
     
     <!-- Modal: Detalhes do Lote -->
-    <div id="batch-details-modal" class="modal">
+    <div id="details-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Detalhes do Lote</h3>
-                <button class="close-modal">&times;</button>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <div class="batch-details-content">
-                <!-- Conteúdo será preenchido dinamicamente -->
+            <div id="batch-details-content">
+                <!-- Conteúdo dinâmico -->
             </div>
             <div class="form-actions">
-                <button class="btn secondary close-details-btn">Fechar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button>
             </div>
         </div>
     </div>
     
-    <!-- Modal: Confirmação de Exclusão -->
-    <div id="delete-confirm-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirmar Exclusão</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="confirm-content">
-                <p>Tem certeza que deseja excluir este lote? Esta ação não pode ser desfeita.</p>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn secondary cancel-delete-btn">Cancelar</button>
-                <button type="button" class="btn danger confirm-delete-btn">Excluir</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Container de Notificações -->
-    <div id="notification-container"></div>
-    
-    <script src="app.js"></script>
-    <script src="ws.js"></script>
+    <script>
+        // Variáveis globais
+        let batches = [];
+        let deferredPrompt = null;
+        
+        // Mapeamento de aves
+        const birdTypeNames = {
+            'chicken': 'Galinha',
+            'duck': 'Pato',
+            'quail': 'Codorna',
+            'goose': 'Ganso',
+            'swan': 'Cisne',
+            'peacock': 'Pavão',
+            'pheasant': 'Faisão'
+        };
+        
+        const incubationPeriods = {
+            'chicken': 21,
+            'duck': 28,
+            'quail': 17,
+            'goose': 30,
+            'swan': 35,
+            'peacock': 28,
+            'pheasant': 24
+        };
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Iniciando IncubadoraPRO...');
+            
+            // Verificar se já está instalado
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById('install-btn').style.display = 'none';
+            }
+            
+            loadData();
+            setupEventListeners();
+            updateTime();
+            updateSensorData();
+            setupPWA();
+            
+            console.log('✅ Pronto!');
+        });
+        
+        // Carregar dados
+        function loadData() {
+            const saved = localStorage.getItem('incubadora-batches');
+            if (saved) {
+                batches = JSON.parse(saved);
+            }
+            renderBatches();
+        }
+        
+        // Configurar eventos
+        function setupEventListeners() {
+            // Navegação
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const page = btn.dataset.page;
+                    navigateToPage(page);
+                });
+            });
+        }
+        
+        // Navegação
+        function navigateToPage(pageId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        // Atualizar tempo
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('pt-BR');
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('current-time').textContent = now.toLocaleTimeString('pt-BR');
+            }, 1000);
+        }
+        
+        // Atualizar sensores
+        function updateSensorData() {
+            // Temperatura
+            const temp = (36.5 + Math.random() * 2).toFixed(1);
+            document.getElementById('temp-value').textContent = temp;
+            document.getElementById('temp-fill').style.width = `${(temp - 36) * 50}%`;
+            
+            // Umidade
+            const humidity = Math.floor(50 + Math.random() * 10);
+            document.getElementById('humidity-value').textContent = humidity;
+            document.getElementById('humidity-fill').style.width = `${(humidity - 50) * 10}%`;
+            
+            // Próxima viragem
+            const now = new Date();
+            const nextTurn = new Date(now);
+            nextTurn.setHours(now.getHours() + 2);
+            nextTurn.setMinutes(0);
+            document.getElementById('next-turn').textContent = nextTurn.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            
+            // Verificar viragem
+            if (now.getMinutes() === 0 && now.getSeconds() < 5) {
+                document.getElementById('turn-status').textContent = 'Virando...';
+                setTimeout(() => {
+                    document.getElementById('turn-status').textContent = 'Aguardando';
+                    showNotification('✅ Viragem concluída', 'Os ovos foram virados');
+                }, 3000);
+            }
+            
+            // Repetir a cada 5 segundos
+            setTimeout(updateSensorData, 5000);
+        }
+        
+        // Configurar PWA
+        function setupPWA() {
+            // Registrar Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            }
+            
+            // Evento de instalação
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('install-btn').style.display = 'flex';
+            });
+            
+            // Botão de instalação
+            document.getElementById('install-btn').addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(() => {
+                        document.getElementById('install-btn').style.display = 'none';
+                    });
+                }
+            });
+            
+            // App instalado
+            window.addEventListener('appinstalled', () => {
+                document.getElementById('install-btn').style.display = 'none';
+                showNotification('🎉 Instalado', 'App instalado com sucesso!');
+            });
+        }
+        
+        // Renderizar lotes
+        function renderBatches() {
+            const container = document.getElementById('batches-container');
+            
+            if (batches.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-egg"></i>
+                        <p>Nenhum lote cadastrado</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = batches.map(batch => {
+                const days = Math.floor((new Date() - new Date(batch.startDate)) / (1000*60*60*24));
+                const incubationDays = incubationPeriods[batch.birdType] || 21;
+                const progress = Math.min(100, (days / incubationDays) * 100);
+                const status = days < incubationDays ? 'Ativo' : 'Concluído';
+                
+                return `
+                    <div class="batch-item">
+                        <div class="batch-header">
+                            <div class="batch-title">Lote #${batch.id}</div>
+                            <div class="batch-status">${status}</div>
+                        </div>
+                        <div class="batch-info">
+                            <div>🐔 ${birdTypeNames[batch.birdType]} - ${batch.eggCount} ovos</div>
+                            <div>📅 Início: ${new Date(batch.startDate).toLocaleDateString('pt-BR')}</div>
+                            <div>📊 Progresso: ${progress.toFixed(0)}%</div>
+                        </div>
+                        <div class="batch-actions">
+                            <button class="icon-btn" onclick="viewBatchDetails(${batch.id})" title="Ver detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="icon-btn" onclick="editBatch(${batch.id})" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="icon-btn delete" onclick="deleteBatch(${batch.id})" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Modal
+        function openBatchModal() {
+            document.getElementById('modal-title').textContent = 'Novo Lote';
+            document.getElementById('batch-form').reset();
+            document.getElementById('batch-id').value = '';
+            document.getElementById('batch-modal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // Ver detalhes do lote
+        function viewBatchDetails(id) {
+            const batch = batches.find(b => b.id === id);
+            if (!batch) return;
+            
+            const days = Math.floor((new Date() - new Date(batch.startDate)) / (1000*60*60*24));
+            const incubationDays = incubationPeriods[batch.birdType] || 21;
+            const progress = Math.min(100, (days / incubationDays) * 100);
+            const hatchDate = new Date(batch.startDate);
+            hatchDate.setDate(hatchDate.getDate() + incubationDays);
+            
+            const detailsHTML = `
+                <div class="batch-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID do Lote:</span>
+                        <span class="detail-value">#${batch.id}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tipo de Ave:</span>
+                        <span class="detail-value">${birdTypeNames[batch.birdType]}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Data de Início:</span>
+                        <span class="detail-value">${new Date(batch.startDate).toLocaleDateString('pt-BR')}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Quantidade de Ovos:</span>
+                        <span class="detail-value">${batch.eggCount}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Dias de Incubação:</span>
+                        <span class="detail-value">${days} dias</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Previsão de Eclosão:</span>
+                        <span class="detail-value">${hatchDate.toLocaleDateString('pt-BR')}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Progresso:</span>
+                        <span class="detail-value">${progress.toFixed(1)}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    ${batch.notes ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Observações:</span>
+                        <span class="detail-value">${batch.notes}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('batch-details-content').innerHTML = detailsHTML;
+            document.getElementById('details-modal').style.display = 'flex';
+        }
+        
+        // Editar lote
+        function editBatch(id) {
+            const batch = batches.find(b => b.id === id);
+            if (!batch) return;
+            
+            document.getElementById('modal-title').textContent = 'Editar Lote';
+            document.getElementById('batch-id').value = batch.id;
+            document.getElementById('bird-type').value = batch.birdType;
+            document.getElementById('start-date').value = batch.startDate;
+            document.getElementById('egg-count').value = batch.eggCount;
+            document.getElementById('notes').value = batch.notes || '';
+            document.getElementById('batch-modal').style.display = 'flex';
+        }
+        
+        // Salvar lote
+        function saveBatch(event) {
+            event.preventDefault();
+            
+            const batchId = document.getElementById('batch-id').value;
+            const batchData = {
+                birdType: document.getElementById('bird-type').value,
+                startDate: document.getElementById('start-date').value,
+                eggCount: parseInt(document.getElementById('egg-count').value),
+                notes: document.getElementById('notes').value
+            };
+            
+            if (batchId) {
+                // Editar lote existente
+                const index = batches.findIndex(b => b.id == batchId);
+                if (index !== -1) {
+                    batches[index] = { ...batches[index], ...batchData };
+                }
+            } else {
+                // Adicionar novo lote
+                batchData.id = batches.length > 0 ? Math.max(...batches.map(b => b.id)) + 1 : 1;
+                batches.push(batchData);
+            }
+            
+            localStorage.setItem('incubadora-batches', JSON.stringify(batches));
+            
+            renderBatches();
+            closeModal();
+            showNotification('✅ Sucesso', batchId ? 'Lote atualizado com sucesso!' : 'Lote salvo com sucesso!');
+        }
+        
+        // Excluir lote
+        function deleteBatch(id) {
+            if (confirm('Tem certeza que deseja excluir este lote?')) {
+                batches = batches.filter(b => b.id !== id);
+                localStorage.setItem('incubadora-batches', JSON.stringify(batches));
+                renderBatches();
+                showNotification('✅ Sucesso', 'Lote excluído com sucesso!');
+            }
+        }
+        
+        // Limpar dados
+        function clearData() {
+            if (confirm('Tem certeza que deseja limpar todos os dados?')) {
+                localStorage.clear();
+                batches = [];
+                renderBatches();
+                showNotification('✅ Sucesso', 'Dados limpos com sucesso!');
+            }
+        }
+        
+        // Notificações
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 0.3rem;">${title}</div>
+                <div style="font-size: 0.9rem; color: #666;">${message}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 </html>
