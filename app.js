@@ -1,596 +1,1080 @@
-// Variáveis globais
-let batches = [];
-let reminders = [];
-let currentFilter = 'all';
-let deferredPrompt = null;
-
-// Mapeamento de nomes de aves
-const birdTypeNames = {
-    'chicken': 'Galinha',
-    'duck': 'Pato',
-    'quail': 'Codorna',
-    'goose': 'Ganso',
-    'swan': 'Cisne',
-    'peacock': 'Pavão',
-    'pheasant': 'Faisão'
-};
-
-// Temperaturas ideais para cada tipo de ave
-const idealTemperatures = {
-    'chicken': 37.5,
-    'duck': 37.5,
-    'quail': 37.5,
-    'goose': 37.5,
-    'swan': 37.5,
-    'peacock': 37.5,
-    'pheasant': 37.5
-};
-
-// Períodos de incubação para cada tipo de ave (em dias)
-const incubationPeriods = {
-    'chicken': 21,
-    'duck': 28,
-    'quail': 17,
-    'goose': 30,
-    'swan': 35,
-    'peacock': 28,
-    'pheasant': 24
-};
-
-// Inicialização do aplicativo
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Iniciando IncubaPRO...');
-    initializeApp();
-    setupEventListeners();
-    loadBatches();
-    loadReminders();
-    updateTime();
-    updateSensorData();
-    setupPWA();
-    updateIdealTemperature();
-    
-    console.log('IncubaPRO iniciado com sucesso!');
-});
-
-// Função principal de inicialização
-function initializeApp() {
-    // Verificar suporte a notificações
-    if ('Notification' in window) {
-        Notification.requestPermission();
-    }
-    
-    // Carregar configurações salvas
-    loadSettings();
-    
-    // Iniciar atualizações periódicas
-    setInterval(updateTime, 1000);
-    setInterval(updateSensorData, 5000);
-    setInterval(updateTurnTimer, 60000); // Atualizar a cada minuto
+/* Reset e Variáveis */
+:root {
+    --primary-color: #1565C0;
+    --primary-dark: #0D47A1;
+    --primary-light: #42a5f5;
+    --secondary-color: #FF6F00;
+    --success-color: #4CAF50;
+    --warning-color: #FFC107;
+    --danger-color: #F44336;
+    --text-color: #333333;
+    --text-light: #666666;
+    --bg-color: #F5F5F5;
+    --card-bg: #FFFFFF;
+    --border-color: #E0E0E0;
+    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-// Configurar event listeners
-function setupEventListeners() {
-    console.log('Configurando event listeners...');
-    
-    // Navegação
-    document.querySelectorAll('.nav-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const pageId = button.getAttribute('data-page');
-            navigateToPage(pageId);
-        });
-    });
-    
-    // Botão de adicionar lote
-    const addBatchBtn = document.getElementById('add-batch-btn');
-    if (addBatchBtn) {
-        addBatchBtn.addEventListener('click', openAddBatchModal);
-    }
-    
-    const emptyAddBtn = document.querySelector('.empty-add-btn');
-    if (emptyAddBtn) {
-        emptyAddBtn.addEventListener('click', openAddBatchModal);
-    }
-    
-    // Modais
-    document.querySelectorAll('.close-modal').forEach(button => {
-        button.addEventListener('click', closeModal);
-    });
-    
-    // Formulário de lote
-    const batchForm = document.getElementById('batch-form');
-    if (batchForm) {
-        batchForm.addEventListener('submit', saveBatch);
-    }
-    
-    // Botões de cancelar
-    const cancelBtn = document.querySelector('.cancel-btn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', closeModal);
-    }
-    
-    const closeDetailsBtn = document.querySelector('.close-details-btn');
-    if (closeDetailsBtn) {
-        closeDetailsBtn.addEventListener('click', closeModal);
-    }
-    
-    const cancelDeleteBtn = document.querySelector('.cancel-delete-btn');
-    if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', closeModal);
-    }
-    
-    // Confirmação de exclusão
-    const confirmDeleteBtn = document.querySelector('.confirm-delete-btn');
-    if (confirmDeleteBtn) {
-        confirmDeleteBtn.addEventListener('click', deleteBatch);
-    }
-    
-    // Filtros de lembretes
-    document.querySelectorAll('.filter-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            currentFilter = button.getAttribute('data-filter');
-            updateReminderFilter();
-        });
-    });
-    
-    // Configurações
-    const tempUnit = document.getElementById('temp-unit');
-    if (tempUnit) {
-        tempUnit.addEventListener('change', saveSettings);
-    }
-    
-    const turnFrequency = document.getElementById('turn-frequency');
-    if (turnFrequency) {
-        turnFrequency.addEventListener('change', saveSettings);
-    }
-    
-    const tempAlerts = document.getElementById('temp-alerts');
-    if (tempAlerts) {
-        tempAlerts.addEventListener('change', saveSettings);
-    }
-    
-    const turnReminders = document.getElementById('turn-reminders');
-    if (turnReminders) {
-        turnReminders.addEventListener('change', saveSettings);
-    }
-    
-    console.log('Event listeners configurados!');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// Navegação entre páginas
-function navigateToPage(pageId) {
-    console.log('Navegando para:', pageId);
-    
-    // Remover active de todos os botões e páginas
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    
-    // Adicionar active ao botão e página clicados
-    const navBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
-    if (navBtn) {
-        navBtn.classList.add('active');
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Cabeçalho */
+.app-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo i {
+    font-size: 2rem;
+    color: var(--warning-color);
+}
+
+.logo h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.logo span {
+    color: var(--warning-color);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.install-btn {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.install-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(255,255,255,0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--success-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Navegação */
+.app-nav {
+    background-color: var(--primary-dark);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 73px;
+    z-index: 99;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: white;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+    flex: 1;
+}
+
+.nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 3px solid var(--warning-color);
+}
+
+.nav-btn i {
+    font-size: 1.25rem;
+}
+
+.nav-btn span {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Conteúdo principal */
+.app-main {
+    flex: 1;
+    padding: 1.5rem;
+    padding-bottom: 5rem;
+}
+
+.page {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-header h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.current-time {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    background-color: var(--bg-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+}
+
+/* Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.card-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card-header i {
+    font-size: 1.5rem;
+    color: var(--primary-light);
+}
+
+.card-value {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.unit {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+/* Status bar */
+.status-bar {
+    height: 8px;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.status-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.temp-fill {
+    background: linear-gradient(90deg, #FF9800, var(--secondary-color));
+}
+
+.humidity-fill {
+    background: linear-gradient(90deg, #2196F3, #03A9F4);
+}
+
+/* Turn card */
+.turn-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.turn-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.turn-timer {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* Status list */
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: var(--bg-color);
+    border-radius: 0.5rem;
+}
+
+.status-item i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.status-item strong {
+    color: var(--success-color);
+}
+
+/* Chart container */
+.chart-container {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-top: 2rem;
+}
+
+.chart-container h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Grids */
+.incubators-grid,
+.batches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.incubator-card,
+.batch-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.incubator-card::before,
+.batch-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: var(--primary-color);
+}
+
+.incubator-card:hover,
+.batch-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+.incubator-header,
+.batch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.incubator-title,
+.batch-title {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.incubator-status,
+.batch-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-online {
+    background-color: #E8F5E9;
+    color: var(--success-color);
+}
+
+.status-offline {
+    background-color: #FFEBEE;
+    color: var(--danger-color);
+}
+
+.status-active {
+    background-color: #E8F5E9;
+    color: var(--success-color);
+}
+
+.status-pending {
+    background-color: #FFF3E0;
+    color: var(--secondary-color);
+}
+
+.status-completed {
+    background-color: #E3F2FD;
+    color: var(--primary-color);
+}
+
+.incubator-info,
+.batch-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.incubator-info i,
+.batch-info i {
+    color: var(--primary-color);
+    width: 20px;
+}
+
+.incubator-actions,
+.batch-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Empty state */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--text-light);
+    grid-column: 1 / -1;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-light);
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+/* Reminders */
+.filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background-color: var(--bg-color);
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.filter-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.reminders-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reminder-item {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.reminder-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.reminder-item.completed {
+    opacity: 0.7;
+}
+
+.reminder-item.completed .reminder-content h4 {
+    text-decoration: line-through;
+}
+
+.reminder-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.reminder-content {
+    flex: 1;
+}
+
+.reminder-content h4 {
+    margin-bottom: 0.25rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.reminder-content p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.reminder-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Settings */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.settings-section {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.settings-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-info h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.setting-info p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+/* Toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+/* Select input */
+.select-input {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: white;
+    min-width: 180px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.select-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Rodapé */
+.app-footer {
+    background-color: var(--primary-dark);
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: auto;
+}
+
+.social-links {
+    margin-top: 1rem;
+}
+
+.social-link {
+    color: white;
+    margin: 0 0.75rem;
+    text-decoration: none;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    color: var(--warning-color);
+    transform: translateY(-3px);
+}
+
+/* Modais */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
     }
-    
-    const page = document.getElementById(pageId);
-    if (page) {
-        page.classList.add('active');
-    }
-    
-    // Atualizar conteúdo específico da página
-    if (pageId === 'batches') {
-        renderBatches();
-    } else if (pageId === 'reminders') {
-        renderReminders();
-    } else if (pageId === 'dashboard') {
-        updateIdealTemperature();
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
-// Atualizar relógio
-function updateTime() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('pt-BR');
-    const currentTimeElement = document.getElementById('current-time');
-    if (currentTimeElement) {
-        currentTimeElement.textContent = timeString;
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.modal-header h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-modal:hover {
+    color: var(--danger-color);
+    background-color: var(--bg-color);
+}
+
+/* Formulários */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Botões */
+.btn {
+    padding: 0.875rem 1.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn.primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn.secondary {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+}
+
+.btn.secondary:hover {
+    background-color: var(--border-color);
+}
+
+.btn.danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn.danger:hover {
+    background-color: #d32f2f;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 1.25rem;
+}
+
+.btn-icon:hover {
+    background-color: var(--bg-color);
+    color: var(--primary-dark);
+}
+
+/* Notificações */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    max-width: 350px;
+    animation: slideInRight 0.3s ease;
+    border-left: 4px solid var(--success-color);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
 
-// Simular dados de sensores
-function updateSensorData() {
-    // Obter temperatura ideal para o lote ativo
-    let idealTemp = 37.5; // Padrão
-    if (batches.length > 0) {
-        const activeBatch = batches.find(batch => {
-            const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-            return daysSinceStart < 21;
-        });
-        
-        if (activeBatch) {
-            idealTemp = idealTemperatures[activeBatch.birdType] || 37.5;
-        }
-    }
-    
-    // Temperatura simulada (variação em torno da ideal)
-    const temp = (idealTemp - 1 + Math.random() * 2).toFixed(1);
-    const tempValueElement = document.getElementById('temp-value');
-    if (tempValueElement) {
-        tempValueElement.textContent = temp;
-    }
-    
-    // Umidade simulada (50-60%)
-    const humidity = (50 + Math.random() * 10).toFixed(0);
-    const humidityValueElement = document.getElementById('humidity-value');
-    if (humidityValueElement) {
-        humidityValueElement.textContent = humidity;
-    }
-    
-    // Atualizar barras de status
-    const tempPercent = ((temp - (idealTemp - 2)) / 4) * 100;
-    const humidityPercent = ((humidity - 50) / 10) * 100;
-    
-    const tempFill = document.querySelector('.temp-fill');
-    if (tempFill) {
-        tempFill.style.width = `${Math.max(0, Math.min(100, tempPercent))}%`;
-    }
-    
-    const humidityFill = document.querySelector('.humidity-fill');
-    if (humidityFill) {
-        humidityFill.style.width = `${Math.max(0, Math.min(100, humidityPercent))}%`;
-    }
-    
-    // Verificar alertas
-    checkAlerts(parseFloat(temp), parseInt(humidity));
+.notification.success {
+    border-left-color: var(--success-color);
 }
 
-// Atualizar temperatura ideal no dashboard
-function updateIdealTemperature() {
-    let idealTemp = 37.5; // Padrão
-    
-    if (batches.length > 0) {
-        const activeBatch = batches.find(batch => {
-            const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-            return daysSinceStart < 21;
-        });
-        
-        if (activeBatch) {
-            idealTemp = idealTemperatures[activeBatch.birdType] || 37.5;
-        }
-    }
-    
-    // Atualizar o texto no dashboard
-    const idealTempElement = document.getElementById('ideal-temp');
-    if (idealTempElement) {
-        idealTempElement.textContent = idealTemp;
-    }
+.notification.error {
+    border-left-color: var(--danger-color);
 }
 
-// Verificar alertas de temperatura e umidade
-function checkAlerts(temp, humidity) {
-    const tempAlertsEnabled = document.getElementById('temp-alerts');
-    const isChecked = tempAlertsEnabled ? tempAlertsEnabled.checked : true;
-    
-    if (isChecked) {
-        // Obter temperatura ideal para o lote ativo
-        let idealTemp = 37.5;
-        if (batches.length > 0) {
-            const activeBatch = batches.find(batch => {
-                const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-                return daysSinceStart < 21;
-            });
-            
-            if (activeBatch) {
-                idealTemp = idealTemperatures[activeBatch.birdType] || 37.5;
-            }
-        }
-        
-        if (temp < idealTemp - 0.5 || temp > idealTemp + 0.5) {
-            showNotification('Alerta de Temperatura', `Temperatura fora do ideal: ${temp}°C (ideal: ${idealTemp}°C)`, 'warning');
-        }
-    }
+.notification.warning {
+    border-left-color: var(--warning-color);
 }
 
-// Atualizar temporizador de viragem
-function updateTurnTimer() {
-    const now = new Date();
-    const nextTurn = new Date(now);
-    nextTurn.setHours(now.getHours() + 2);
-    nextTurn.setMinutes(0);
-    nextTurn.setSeconds(0);
-    
-    const timeString = nextTurn.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    const nextTurnElement = document.getElementById('next-turn');
-    if (nextTurnElement) {
-        nextTurnElement.textContent = timeString;
-    }
-    
-    // Verificar se é hora de virar
-    if (now.getMinutes() === 0 && now.getSeconds() < 10) {
-        const turnStatusElement = document.getElementById('turn-status');
-        if (turnStatusElement) {
-            turnStatusElement.textContent = 'Virando...';
-            setTimeout(() => {
-                turnStatusElement.textContent = 'Aguardando';
-                showNotification('Viragem de Ovos', 'Os ovos foram virados com sucesso!', 'success');
-            }, 5000);
-        }
-    }
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
 }
 
-// Configurar PWA
-function setupPWA() {
-    console.log('Configurando PWA...');
-    
-    // Evento de instalação
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        const installBtn = document.getElementById('install-btn');
-        if (installBtn) {
-            installBtn.style.display = 'flex';
-        }
-        console.log('Evento beforeinstallprompt capturado');
-    });
-    
-    // Botão de instalação
-    const installBtn = document.getElementById('install-btn');
-    if (installBtn) {
-        installBtn.addEventListener('click', () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('Usuário aceitou a instalação');
-                    }
-                    deferredPrompt = null;
-                });
-                installBtn.style.display = 'none';
-            }
-        });
-    }
-    
-    // Verificar se o app já está instalado
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        console.log('Aplicativo já está instalado');
-        const installBtn = document.getElementById('install-btn');
-        if (installBtn) {
-            installBtn.style.display = 'none';
-        }
-    }
-    
-    // Para testes: mostrar botão de instalação após 5 segundos
-    setTimeout(() => {
-        if (!window.matchMedia('(display-mode: standalone)').matches) {
-            const installBtn = document.getElementById('install-btn');
-            if (installBtn && installBtn.style.display === 'none') {
-                console.log('Mostrando botão de instalação para testes');
-                installBtn.style.display = 'flex';
-            }
-        }
-    }, 5000);
-    
-    console.log('PWA configurado!');
+.notification-title {
+    font-weight: 700;
+    color: var(--text-color);
 }
 
-// Funções de Lotes
-function loadBatches() {
-    const savedBatches = localStorage.getItem('incubadora-batches');
-    if (savedBatches) {
-        try {
-            batches = JSON.parse(savedBatches);
-        } catch (e) {
-            console.error('Erro ao carregar lotes:', e);
-            batches = [];
-        }
+.notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-light);
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.notification-close:hover {
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+
+.notification-message {
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+/* Detalhes do lote */
+.batch-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.detail-item {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.progress-bar {
+    height: 12px;
+    background-color: var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .app-nav {
+        top: auto;
+        position: relative;
+        flex-wrap: wrap;
+    }
+    
+    .nav-btn {
+        min-width: 80px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .incubators-grid,
+    .batches-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+    
+    .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 
-function saveBatches() {
-    try {
-        localStorage.setItem('incubadora-batches', JSON.stringify(batches));
-    } catch (e) {
-        console.error('Erro ao salvar lotes:', e);
-    }
-}
-
-function renderBatches() {
-    const container = document.getElementById('batches-container');
-    if (!container) return;
-    
-    if (batches.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-egg"></i>
-                <p>Nenhum lote cadastrado</p>
-                <button class="btn primary empty-add-btn">Adicionar primeiro lote</button>
-            </div>
-        `;
-        const emptyAddBtn = container.querySelector('.empty-add-btn');
-        if (emptyAddBtn) {
-            emptyAddBtn.addEventListener('click', openAddBatchModal);
-        }
-        return;
+@media (max-width: 480px) {
+    .app-main {
+        padding: 1rem;
     }
     
-    container.innerHTML = batches.map(batch => {
-        const hatchDate = calculateHatchDate(batch);
-        return `
-        <div class="batch-card" data-id="${batch.id}">
-            <div class="batch-header">
-                <div class="batch-title">Lote #${batch.id}</div>
-                <div class="batch-status ${getStatusClass(batch)}">${getStatusText(batch)}</div>
-            </div>
-            <div class="batch-info">
-                <div><i class="fas fa-egg"></i> ${birdTypeNames[batch.birdType] || batch.birdType} - ${batch.eggCount} ovos</div>
-                <div><i class="fas fa-calendar"></i> Início: ${formatDate(batch.startDate)}</div>
-                <div><i class="fas fa-thermometer-half"></i> Incubadora #${batch.incubator}</div>
-                <div><i class="fas fa-calendar-check"></i> Previsão: ${formatDate(hatchDate.toISOString().split('T')[0])}</div>
-            </div>
-            <div class="batch-actions">
-                <button class="btn-icon" onclick="viewBatchDetails(${batch.id})">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn-icon" onclick="editBatch(${batch.id})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon" onclick="confirmDeleteBatch(${batch.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `}).join('');
-}
-
-function calculateHatchDate(batch) {
-    const startDate = new Date(batch.startDate);
-    const incubationDays = incubationPeriods[batch.birdType] || 21;
-    const hatchDate = new Date(startDate);
-    hatchDate.setDate(startDate.getDate() + incubationDays);
-    return hatchDate;
-}
-
-function getStatusClass(batch) {
-    const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-    const incubationDays = incubationPeriods[batch.birdType] || 21;
-    
-    if (daysSinceStart < incubationDays - 2) {
-        return 'status-active';
-    } else if (daysSinceStart < incubationDays + 3) {
-        return 'status-pending';
-    } else {
-        return 'status-completed';
-    }
-}
-
-function getStatusText(batch) {
-    const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-    const incubationDays = incubationPeriods[batch.birdType] || 21;
-    
-    if (daysSinceStart < incubationDays - 2) {
-        return 'Ativo';
-    } else if (daysSinceStart < incubationDays + 3) {
-        return 'Eclodindo';
-    } else {
-        return 'Concluído';
-    }
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-}
-
-function openAddBatchModal() {
-    const modalTitle = document.getElementById('modal-title');
-    const batchForm = document.getElementById('batch-form');
-    const batchModal = document.getElementById('batch-modal');
-    
-    if (modalTitle) modalTitle.textContent = 'Adicionar Novo Lote';
-    if (batchForm) batchForm.reset();
-    const batchId = document.getElementById('batch-id');
-    if (batchId) batchId.value = '';
-    if (batchModal) batchModal.style.display = 'flex';
-}
-
-function editBatch(id) {
-    const batch = batches.find(b => b.id === id);
-    if (!batch) return;
-    
-    const modalTitle = document.getElementById('modal-title');
-    const batchId = document.getElementById('batch-id');
-    const birdType = document.getElementById('bird-type');
-    const startDate = document.getElementById('start-date');
-    const eggCount = document.getElementById('egg-count');
-    const incubator = document.getElementById('incubator');
-    const notes = document.getElementById('notes');
-    const batchModal = document.getElementById('batch-modal');
-    
-    if (modalTitle) modalTitle.textContent = 'Editar Lote';
-    if (batchId) batchId.value = batch.id;
-    if (birdType) birdType.value = batch.birdType;
-    if (startDate) startDate.value = batch.startDate;
-    if (eggCount) eggCount.value = batch.eggCount;
-    if (incubator) incubator.value = batch.incubator;
-    if (notes) notes.value = batch.notes || '';
-    if (batchModal) batchModal.style.display = 'flex';
-}
-
-function saveBatch(e) {
-    e.preventDefault();
-    
-    const batchId = document.getElementById('batch-id').value;
-    const batchData = {
-        birdType: document.getElementById('bird-type').value,
-        startDate: document.getElementById('start-date').value,
-        eggCount: parseInt(document.getElementById('egg-count').value),
-        incubator: document.getElementById('incubator').value,
-        notes: document.getElementById('notes').value
-    };
-    
-    if (batchId) {
-        // Editar lote existente
-        const index = batches.findIndex(b => b.id === parseInt(batchId));
-        if (index !== -1) {
-            batches[index] = { ...batches[index], ...batchData };
-        }
-    } else {
-        // Adicionar novo lote
-        const newBatch = {
-            id: batches.length > 0 ? Math.max(...batches.map(b => b.id)) + 1 : 1,
-            ...batchData
-        };
-        batches.push(newBatch);
+    .card-value {
+        font-size: 2.5rem;
     }
     
-    saveBatches();
-    renderBatches();
-    closeModal();
-    showNotification('Sucesso', 'Lote salvo com sucesso!', 'success');
+    .nav-btn span {
+        font-size: 0.75rem;
+    }
     
-    // Atualizar temperatura ideal se estiver no dashboard
-    if (document.getElementById('dashboard').classList.contains('active')) {
-        updateIdealTemperature();
+    .nav-btn i {
+        font-size: 1.1rem;
     }
 }
-
-function viewBatchDetails(id) {
-    const batch = batches.find(b => b.id === id);
-    if (!batch) return;
-    
-    const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-    const incubationDays = incubationPeriods[batch.birdType] || 21;
-    const progress = Math.min(100, (daysSinceStart / incubationDays) * 100);
-    const hatchDate = calculateHatchDate(batch);
-    
-    const content = `
-        <div class="batch-details">
-            <div class="detail-item">
-                <h4>ID do Lote</h4>
-                <p>#${batch.id}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Tipo de Ave</h4>
-                <p>${birdTypeNames[batch.birdType] || batch.birdType}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Data de Início</h4>
-                <p>${formatDate(batch.startDate)}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Quantidade de Ovos</h4>
-                <p>${batch.eggCount}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Incubadora</h4>
-                <p>#${batch.incubator}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Dias de Incubação</h4>
-                <p>${daysSinceStart} dias</p>
-            </div>
-            <div class="detail-item">
-                <h4>Previsão de Eclosão</h4>
-                <p>${formatDate(hatchDate.toISOString().split('T')[0])}</p>
-            </div>
-            <div class="detail-item">
-                <h4>Temperatura Ideal</h4>
-                <p>${idealTemperatures[bat
