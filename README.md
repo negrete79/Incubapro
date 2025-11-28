@@ -12,7 +12,7 @@ App para controle de incubadoras de ovos - funciona como aplicativo no celular!
 
 ## 📱 Como usar
 
-1. **Acesse o site**: [https://seu-usuario.github.io/incubadora-pro](https://seu-usuario.github.io/incubadora-pro)
+1. **Acesse o site**: [https://seu-usuario.github.io/incubadora-pro](https://negrete79.github.io/Incubapro/)
 2. **Instale o app**: 
    - No Chrome, clique no ícone 📥 que aparece na barra de endereço
    - Confirme "Instalar"
