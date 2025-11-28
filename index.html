@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incubadora Avícola - Sistema Inteligente</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a237e">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Cabeçalho -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-egg"></i>
+                <h1>Incuba<span>PRO</span></h1>
+            </div>
+            <div class="header-actions">
+                <button id="install-btn" class="install-btn">
+                    <i class="fas fa-download"></i> Instalar
+                </button>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navegação -->
+        <nav class="app-nav">
+            <button class="nav-btn active" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Painel</span>
+            </button>
+            <button class="nav-btn" data-page="batches">
+                <i class="fas fa-layer-group"></i>
+                <span>Lotes</span>
+            </button>
+            <button class="nav-btn" data-page="reminders">
+                <i class="fas fa-bell"></i>
+                <span>Lembretes</span>
+            </button>
+            <button class="nav-btn" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span>Config</span>
+            </button>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <main class="app-main">
+            <!-- Página: Painel -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h2>Painel de Controle</h2>
+                    <div class="current-time" id="current-time">--:--:--</div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="card temp-card">
+                        <div class="card-header">
+                            <h3>Temperatura</h3>
+                            <i class="fas fa-temperature-high"></i>
+                        </div>
+                        <div class="card-value">
+                            <span id="temp-value">--</span>
+                            <span class="unit">°C</span>
+                        </div>
+                        <div class="card-status">
+                            <div class="status-bar">
+                                <div class="status-fill temp-fill"></div>
+                            </div>
+                            <span>Ideal: <span id="ideal-temp">37.5</span>°C</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card humidity-card">
+                        <div class="card-header">
+                            <h3>Umidade</h3>
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="card-value">
+                            <span id="humidity-value">--</span>
+                            <span class="unit">%</span>
+                        </div>
+                        <div class="card-status">
+                            <div class="status-bar">
+                                <div class="status-fill humidity-fill"></div>
+                            </div>
+                            <span>Ideal: 55%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card turn-card">
+                        <div class="card-header">
+                            <h3>Viragem</h3>
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="turn-status">
+                            <div class="turn-icon">
+                                <i class="fas fa-egg"></i>
+                            </div>
+                            <span id="turn-status">Aguardando</span>
+                        </div>
+                        <div class="turn-timer">
+                            Próxima: <span id="next-turn">--:--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card status-card">
+                        <div class="card-header">
+                            <h3>Status do Sistema</h3>
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="status-list">
+                            <div class="status-item">
+                                <i class="fas fa-wifi"></i>
+                                <span>Conexão: <strong>OK</strong></span>
+                            </div>
+                            <div class="status-item">
+                                <i class="fas fa-battery-three-quarters"></i>
+                                <span>Energia: <strong>Estável</strong></span>
+                            </div>
+                            <div class="status-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Segurança: <strong>Ativa</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Página: Lotes -->
+            <div id="batches" class="page">
+                <div class="page-header">
+                    <h2>Lotes de Ovos</h2>
+                    <button id="add-batch-btn" class="btn primary">
+                        <i class="fas fa-plus"></i> Novo Lote
+                    </button>
+                </div>
+                
+                <div id="batches-container" class="batches-container">
+                    <div class="empty-state">
+                        <i class="fas fa-egg"></i>
+                        <p>Nenhum lote cadastrado</p>
+                        <button class="btn primary empty-add-btn">Adicionar primeiro lote</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Página: Lembretes -->
+            <div id="reminders" class="page">
+                <div class="page-header">
+                    <h2>Próximos Lembretes</h2>
+                    <div class="filter-tabs">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="today">Hoje</button>
+                        <button class="filter-btn" data-filter="week">Esta Semana</button>
+                    </div>
+                </div>
+                
+                <div class="reminders-container">
+                    <ul id="reminders-list" class="reminders-list">
+                        <li class="reminder-item">
+                            <div class="reminder-icon">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <div class="reminder-content">
+                                <h4>Virar ovos - Lote #1</h4>
+                                <p>Hoje, 14:00</p>
+                            </div>
+                            <div class="reminder-actions">
+                                <button class="btn-icon"><i class="fas fa-check"></i></button>
+                            </div>
+                        </li>
+                        <li class="reminder-item">
+                            <div class="reminder-icon">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                            <div class="reminder-content">
+                                <h4>Verificar temperatura - Lote #2</h4>
+                                <p>Hoje, 18:00</p>
+                            </div>
+                            <div class="reminder-actions">
+                                <button class="btn-icon"><i class="fas fa-check"></i></button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Página: Configurações -->
+            <div id="settings" class="page">
+                <div class="page-header">
+                    <h2>Configurações</h2>
+                </div>
+                
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3>Notificações</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Alertas de Temperatura</h4>
+                                <p>Receber alertas quando a temperatura estiver fora do ideal</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="temp-alerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Lembretes de Viragem</h4>
+                                <p>Receber lembretes para virar os ovos</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="turn-reminders" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Preferências</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Unidade de Temperatura</h4>
+                            </div>
+                            <select class="select-input" id="temp-unit">
+                                <option value="celsius">Celsius (°C)</option>
+                                <option value="fahrenheit">Fahrenheit (°F)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Frequência de Viragem</h4>
+                            </div>
+                            <select class="select-input" id="turn-frequency">
+                                <option value="2">A cada 2 horas</option>
+                                <option value="4">A cada 4 horas</option>
+                                <option value="8">A cada 8 horas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Rodapé -->
+        <footer class="app-footer">
+            <p>Desenvolvido por Elias Costa Negret's</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Modal: Adicionar/Editar Lote -->
+    <div id="batch-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Adicionar Novo Lote</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="batch-form">
+                <input type="hidden" id="batch-id">
+                <div class="form-group">
+                    <label for="bird-type">Tipo de Ave</label>
+                    <select id="bird-type" required>
+                        <option value="">Selecione...</option>
+                        <option value="chicken">🐔 Galinha</option>
+                        <option value="duck">🦆 Pato</option>
+                        <option value="quail">🐦 Codorna</option>
+                        <option value="goose">🪿 Ganso</option>
+                        <option value="swan">🦢 Cisne</option>
+                        <option value="peacock">🦚 Pavão</option>
+                        <option value="pheasant">🐓 Faisão</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="start-date">Data de Início</label>
+                    <input type="date" id="start-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="egg-count">Quantidade de Ovos</label>
+                    <input type="number" id="egg-count" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="incubator">Incubadora</label>
+                    <select id="incubator">
+                        <option value="1">Incubadora #1</option>
+                        <option value="2">Incubadora #2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Observações</label>
+                    <textarea id="notes" rows="3" placeholder="Informações adicionais..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn secondary cancel-btn">Cancelar</button>
+                    <button type="submit" class="btn primary">Salvar Lote</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal: Detalhes do Lote -->
+    <div id="batch-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalhes do Lote</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="batch-details-content">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+            <div class="form-actions">
+                <button class="btn secondary close-details-btn">Fechar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal: Confirmação de Exclusão -->
+    <div id="delete-confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="confirm-content">
+                <p>Tem certeza que deseja excluir este lote? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn secondary cancel-delete-btn">Cancelar</button>
+                <button type="button" class="btn danger confirm-delete-btn">Excluir</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Container de Notificações -->
+    <div id="notification-container"></div>
+    
+    <script src="app.js"></script>
+    <script src="ws.js"></script>
+</body>
+</html>
