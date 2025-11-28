@@ -2,7 +2,6 @@
 let batches = [];
 let reminders = [];
 let currentFilter = 'all';
-let wsConnection = null;
 let deferredPrompt = null;
 
 // Mapeamento de nomes de aves
@@ -40,6 +39,7 @@ const incubationPeriods = {
 
 // Inicialização do aplicativo
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Iniciando IncubaPRO...');
     initializeApp();
     setupEventListeners();
     loadBatches();
@@ -48,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSensorData();
     setupPWA();
     updateIdealTemperature();
+    
+    console.log('IncubaPRO iniciado com sucesso!');
 });
 
 // Função principal de inicialização
@@ -68,6 +70,8 @@ function initializeApp() {
 
 // Configurar event listeners
 function setupEventListeners() {
+    console.log('Configurando event listeners...');
+    
     // Navegação
     document.querySelectorAll('.nav-btn').forEach(button => {
         button.addEventListener('click', () => {
@@ -77,8 +81,15 @@ function setupEventListeners() {
     });
     
     // Botão de adicionar lote
-    document.getElementById('add-batch-btn').addEventListener('click', openAddBatchModal);
-    document.querySelector('.empty-add-btn').addEventListener('click', openAddBatchModal);
+    const addBatchBtn = document.getElementById('add-batch-btn');
+    if (addBatchBtn) {
+        addBatchBtn.addEventListener('click', openAddBatchModal);
+    }
+    
+    const emptyAddBtn = document.querySelector('.empty-add-btn');
+    if (emptyAddBtn) {
+        emptyAddBtn.addEventListener('click', openAddBatchModal);
+    }
     
     // Modais
     document.querySelectorAll('.close-modal').forEach(button => {
@@ -86,15 +97,32 @@ function setupEventListeners() {
     });
     
     // Formulário de lote
-    document.getElementById('batch-form').addEventListener('submit', saveBatch);
+    const batchForm = document.getElementById('batch-form');
+    if (batchForm) {
+        batchForm.addEventListener('submit', saveBatch);
+    }
     
     // Botões de cancelar
-    document.querySelector('.cancel-btn').addEventListener('click', closeModal);
-    document.querySelector('.close-details-btn').addEventListener('click', closeModal);
-    document.querySelector('.cancel-delete-btn').addEventListener('click', closeModal);
+    const cancelBtn = document.querySelector('.cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeModal);
+    }
+    
+    const closeDetailsBtn = document.querySelector('.close-details-btn');
+    if (closeDetailsBtn) {
+        closeDetailsBtn.addEventListener('click', closeModal);
+    }
+    
+    const cancelDeleteBtn = document.querySelector('.cancel-delete-btn');
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', closeModal);
+    }
     
     // Confirmação de exclusão
-    document.querySelector('.confirm-delete-btn').addEventListener('click', deleteBatch);
+    const confirmDeleteBtn = document.querySelector('.confirm-delete-btn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', deleteBatch);
+    }
     
     // Filtros de lembretes
     document.querySelectorAll('.filter-btn').forEach(button => {
@@ -105,21 +133,47 @@ function setupEventListeners() {
     });
     
     // Configurações
-    document.getElementById('temp-unit').addEventListener('change', saveSettings);
-    document.getElementById('turn-frequency').addEventListener('change', saveSettings);
-    document.getElementById('temp-alerts').addEventListener('change', saveSettings);
-    document.getElementById('turn-reminders').addEventListener('change', saveSettings);
+    const tempUnit = document.getElementById('temp-unit');
+    if (tempUnit) {
+        tempUnit.addEventListener('change', saveSettings);
+    }
+    
+    const turnFrequency = document.getElementById('turn-frequency');
+    if (turnFrequency) {
+        turnFrequency.addEventListener('change', saveSettings);
+    }
+    
+    const tempAlerts = document.getElementById('temp-alerts');
+    if (tempAlerts) {
+        tempAlerts.addEventListener('change', saveSettings);
+    }
+    
+    const turnReminders = document.getElementById('turn-reminders');
+    if (turnReminders) {
+        turnReminders.addEventListener('change', saveSettings);
+    }
+    
+    console.log('Event listeners configurados!');
 }
 
 // Navegação entre páginas
 function navigateToPage(pageId) {
+    console.log('Navegando para:', pageId);
+    
     // Remover active de todos os botões e páginas
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     
     // Adicionar active ao botão e página clicados
-    document.querySelector(`.nav-btn[data-page="${pageId}"]`).classList.add('active');
-    document.getElementById(pageId).classList.add('active');
+    const navBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
+    if (navBtn) {
+        navBtn.classList.add('active');
+    }
+    
+    const page = document.getElementById(pageId);
+    if (page) {
+        page.classList.add('active');
+    }
     
     // Atualizar conteúdo específico da página
     if (pageId === 'batches') {
@@ -135,44 +189,57 @@ function navigateToPage(pageId) {
 function updateTime() {
     const now = new Date();
     const timeString = now.toLocaleTimeString('pt-BR');
-    document.getElementById('current-time').textContent = timeString;
+    const currentTimeElement = document.getElementById('current-time');
+    if (currentTimeElement) {
+        currentTimeElement.textContent = timeString;
+    }
 }
 
 // Simular dados de sensores
 function updateSensorData() {
-    // Se não houver conexão WebSocket, usar dados simulados
-    if (!wsConnection || wsConnection.readyState !== WebSocket.OPEN) {
-        // Obter temperatura ideal para o lote ativo
-        let idealTemp = 37.5; // Padrão
-        if (batches.length > 0) {
-            const activeBatch = batches.find(batch => {
-                const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-                return daysSinceStart < 21; // Considerando ativo até 21 dias
-            });
-            
-            if (activeBatch) {
-                idealTemp = idealTemperatures[activeBatch.birdType] || 37.5;
-            }
+    // Obter temperatura ideal para o lote ativo
+    let idealTemp = 37.5; // Padrão
+    if (batches.length > 0) {
+        const activeBatch = batches.find(batch => {
+            const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
+            return daysSinceStart < 21;
+        });
+        
+        if (activeBatch) {
+            idealTemp = idealTemperatures[activeBatch.birdType] || 37.5;
         }
-        
-        // Temperatura simulada (variação em torno da ideal)
-        const temp = (idealTemp - 1 + Math.random() * 2).toFixed(1);
-        document.getElementById('temp-value').textContent = temp;
-        
-        // Umidade simulada (50-60%)
-        const humidity = (50 + Math.random() * 10).toFixed(0);
-        document.getElementById('humidity-value').textContent = humidity;
-        
-        // Atualizar barras de status
-        const tempPercent = ((temp - (idealTemp - 2)) / 4) * 100;
-        const humidityPercent = ((humidity - 50) / 10) * 100;
-        
-        document.querySelector('.temp-fill').style.width = `${Math.max(0, Math.min(100, tempPercent))}%`;
-        document.querySelector('.humidity-fill').style.width = `${Math.max(0, Math.min(100, humidityPercent))}%`;
-        
-        // Verificar alertas
-        checkAlerts(parseFloat(temp), parseInt(humidity));
     }
+    
+    // Temperatura simulada (variação em torno da ideal)
+    const temp = (idealTemp - 1 + Math.random() * 2).toFixed(1);
+    const tempValueElement = document.getElementById('temp-value');
+    if (tempValueElement) {
+        tempValueElement.textContent = temp;
+    }
+    
+    // Umidade simulada (50-60%)
+    const humidity = (50 + Math.random() * 10).toFixed(0);
+    const humidityValueElement = document.getElementById('humidity-value');
+    if (humidityValueElement) {
+        humidityValueElement.textContent = humidity;
+    }
+    
+    // Atualizar barras de status
+    const tempPercent = ((temp - (idealTemp - 2)) / 4) * 100;
+    const humidityPercent = ((humidity - 50) / 10) * 100;
+    
+    const tempFill = document.querySelector('.temp-fill');
+    if (tempFill) {
+        tempFill.style.width = `${Math.max(0, Math.min(100, tempPercent))}%`;
+    }
+    
+    const humidityFill = document.querySelector('.humidity-fill');
+    if (humidityFill) {
+        humidityFill.style.width = `${Math.max(0, Math.min(100, humidityPercent))}%`;
+    }
+    
+    // Verificar alertas
+    checkAlerts(parseFloat(temp), parseInt(humidity));
 }
 
 // Atualizar temperatura ideal no dashboard
@@ -182,7 +249,7 @@ function updateIdealTemperature() {
     if (batches.length > 0) {
         const activeBatch = batches.find(batch => {
             const daysSinceStart = Math.floor((new Date() - new Date(batch.startDate)) / (1000 * 60 * 60 * 24));
-            return daysSinceStart < 21; // Considerando ativo até 21 dias
+            return daysSinceStart < 21;
         });
         
         if (activeBatch) {
@@ -199,9 +266,10 @@ function updateIdealTemperature() {
 
 // Verificar alertas de temperatura e umidade
 function checkAlerts(temp, humidity) {
-    const tempAlertsEnabled = document.getElementById('temp-alerts').checked;
+    const tempAlertsEnabled = document.getElementById('temp-alerts');
+    const isChecked = tempAlertsEnabled ? tempAlertsEnabled.checked : true;
     
-    if (tempAlertsEnabled) {
+    if (isChecked) {
         // Obter temperatura ideal para o lote ativo
         let idealTemp = 37.5;
         if (batches.length > 0) {
@@ -225,77 +293,108 @@ function checkAlerts(temp, humidity) {
 function updateTurnTimer() {
     const now = new Date();
     const nextTurn = new Date(now);
-    nextTurn.setHours(now.getHours() + 2); // Próxima viragem em 2 horas
+    nextTurn.setHours(now.getHours() + 2);
     nextTurn.setMinutes(0);
     nextTurn.setSeconds(0);
     
     const timeString = nextTurn.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('next-turn').textContent = timeString;
+    const nextTurnElement = document.getElementById('next-turn');
+    if (nextTurnElement) {
+        nextTurnElement.textContent = timeString;
+    }
     
     // Verificar se é hora de virar
     if (now.getMinutes() === 0 && now.getSeconds() < 10) {
-        document.getElementById('turn-status').textContent = 'Virando...';
-        setTimeout(() => {
-            document.getElementById('turn-status').textContent = 'Aguardando';
-            showNotification('Viragem de Ovos', 'Os ovos foram virados com sucesso!', 'success');
-        }, 5000);
+        const turnStatusElement = document.getElementById('turn-status');
+        if (turnStatusElement) {
+            turnStatusElement.textContent = 'Virando...';
+            setTimeout(() => {
+                turnStatusElement.textContent = 'Aguardando';
+                showNotification('Viragem de Ovos', 'Os ovos foram virados com sucesso!', 'success');
+            }, 5000);
+        }
     }
 }
 
 // Configurar PWA
 function setupPWA() {
+    console.log('Configurando PWA...');
+    
     // Evento de instalação
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        document.getElementById('install-btn').style.display = 'block';
+        const installBtn = document.getElementById('install-btn');
+        if (installBtn) {
+            installBtn.style.display = 'flex';
+        }
         console.log('Evento beforeinstallprompt capturado');
     });
     
     // Botão de instalação
-    document.getElementById('install-btn').addEventListener('click', () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('Usuário aceitou a instalação');
-                }
-                deferredPrompt = null;
-            });
-            document.getElementById('install-btn').style.display = 'none';
-        }
-    });
+    const installBtn = document.getElementById('install-btn');
+    if (installBtn) {
+        installBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação');
+                    }
+                    deferredPrompt = null;
+                });
+                installBtn.style.display = 'none';
+            }
+        });
+    }
     
     // Verificar se o app já está instalado
     if (window.matchMedia('(display-mode: standalone)').matches) {
         console.log('Aplicativo já está instalado');
-        document.getElementById('install-btn').style.display = 'none';
+        const installBtn = document.getElementById('install-btn');
+        if (installBtn) {
+            installBtn.style.display = 'none';
+        }
     }
     
     // Para testes: mostrar botão de instalação após 5 segundos
     setTimeout(() => {
-        if (!window.matchMedia('(display-mode: standalone)').matches && 
-            document.getElementById('install-btn').style.display === 'none') {
-            console.log('Mostrando botão de instalação para testes');
-            document.getElementById('install-btn').style.display = 'block';
+        if (!window.matchMedia('(display-mode: standalone)').matches) {
+            const installBtn = document.getElementById('install-btn');
+            if (installBtn && installBtn.style.display === 'none') {
+                console.log('Mostrando botão de instalação para testes');
+                installBtn.style.display = 'flex';
+            }
         }
     }, 5000);
+    
+    console.log('PWA configurado!');
 }
 
 // Funções de Lotes
 function loadBatches() {
     const savedBatches = localStorage.getItem('incubadora-batches');
     if (savedBatches) {
-        batches = JSON.parse(savedBatches);
+        try {
+            batches = JSON.parse(savedBatches);
+        } catch (e) {
+            console.error('Erro ao carregar lotes:', e);
+            batches = [];
+        }
     }
 }
 
 function saveBatches() {
-    localStorage.setItem('incubadora-batches', JSON.stringify(batches));
+    try {
+        localStorage.setItem('incubadora-batches', JSON.stringify(batches));
+    } catch (e) {
+        console.error('Erro ao salvar lotes:', e);
+    }
 }
 
 function renderBatches() {
     const container = document.getElementById('batches-container');
+    if (!container) return;
     
     if (batches.length === 0) {
         container.innerHTML = `
@@ -305,7 +404,10 @@ function renderBatches() {
                 <button class="btn primary empty-add-btn">Adicionar primeiro lote</button>
             </div>
         `;
-        document.querySelector('.empty-add-btn').addEventListener('click', openAddBatchModal);
+        const emptyAddBtn = container.querySelector('.empty-add-btn');
+        if (emptyAddBtn) {
+            emptyAddBtn.addEventListener('click', openAddBatchModal);
+        }
         return;
     }
     
@@ -378,25 +480,38 @@ function formatDate(dateString) {
 }
 
 function openAddBatchModal() {
-    document.getElementById('modal-title').textContent = 'Adicionar Novo Lote';
-    document.getElementById('batch-form').reset();
-    document.getElementById('batch-id').value = '';
-    document.getElementById('batch-modal').style.display = 'flex';
+    const modalTitle = document.getElementById('modal-title');
+    const batchForm = document.getElementById('batch-form');
+    const batchModal = document.getElementById('batch-modal');
+    
+    if (modalTitle) modalTitle.textContent = 'Adicionar Novo Lote';
+    if (batchForm) batchForm.reset();
+    const batchId = document.getElementById('batch-id');
+    if (batchId) batchId.value = '';
+    if (batchModal) batchModal.style.display = 'flex';
 }
 
 function editBatch(id) {
     const batch = batches.find(b => b.id === id);
     if (!batch) return;
     
-    document.getElementById('modal-title').textContent = 'Editar Lote';
-    document.getElementById('batch-id').value = batch.id;
-    document.getElementById('bird-type').value = batch.birdType;
-    document.getElementById('start-date').value = batch.startDate;
-    document.getElementById('egg-count').value = batch.eggCount;
-    document.getElementById('incubator').value = batch.incubator;
-    document.getElementById('notes').value = batch.notes || '';
+    const modalTitle = document.getElementById('modal-title');
+    const batchId = document.getElementById('batch-id');
+    const birdType = document.getElementById('bird-type');
+    const startDate = document.getElementById('start-date');
+    const eggCount = document.getElementById('egg-count');
+    const incubator = document.getElementById('incubator');
+    const notes = document.getElementById('notes');
+    const batchModal = document.getElementById('batch-modal');
     
-    document.getElementById('batch-modal').style.display = 'flex';
+    if (modalTitle) modalTitle.textContent = 'Editar Lote';
+    if (batchId) batchId.value = batch.id;
+    if (birdType) birdType.value = batch.birdType;
+    if (startDate) startDate.value = batch.startDate;
+    if (eggCount) eggCount.value = batch.eggCount;
+    if (incubator) incubator.value = batch.incubator;
+    if (notes) notes.value = batch.notes || '';
+    if (batchModal) batchModal.style.display = 'flex';
 }
 
 function saveBatch(e) {
@@ -478,89 +593,4 @@ function viewBatchDetails(id) {
             </div>
             <div class="detail-item">
                 <h4>Temperatura Ideal</h4>
-                <p>${idealTemperatures[batch.birdType] || 37.5}°C</p>
-            </div>
-            <div class="detail-item">
-                <h4>Progresso</h4>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progress}%"></div>
-                </div>
-                <p>${progress.toFixed(1)}%</p>
-            </div>
-            ${batch.notes ? `
-            <div class="detail-item">
-                <h4>Observações</h4>
-                <p>${batch.notes}</p>
-            </div>
-            ` : ''}
-        </div>
-    `;
-    
-    document.querySelector('.batch-details-content').innerHTML = content;
-    document.getElementById('batch-details-modal').style.display = 'flex';
-}
-
-function confirmDeleteBatch(id) {
-    document.getElementById('delete-confirm-modal').setAttribute('data-id', id);
-    document.getElementById('delete-confirm-modal').style.display = 'flex';
-}
-
-function deleteBatch() {
-    const modal = document.getElementById('delete-confirm-modal');
-    const id = parseInt(modal.getAttribute('data-id'));
-    
-    batches = batches.filter(b => b.id !== id);
-    saveBatches();
-    renderBatches();
-    closeModal();
-    showNotification('Sucesso', 'Lote excluído com sucesso!', 'success');
-    
-    // Atualizar temperatura ideal se estiver no dashboard
-    if (document.getElementById('dashboard').classList.contains('active')) {
-        updateIdealTemperature();
-    }
-}
-
-// Funções de Lembretes
-function loadReminders() {
-    const savedReminders = localStorage.getItem('incubadora-reminders');
-    if (savedReminders) {
-        reminders = JSON.parse(savedReminders);
-    } else {
-        // Criar lembretes padrão
-        reminders = [
-            {
-                id: 1,
-                title: 'Virar ovos - Lote #1',
-                time: '14:00',
-                date: new Date().toISOString().split('T')[0],
-                completed: false,
-                type: 'turn'
-            },
-            {
-                id: 2,
-                title: 'Verificar temperatura - Lote #2',
-                time: '18:00',
-                date: new Date().toISOString().split('T')[0],
-                completed: false,
-                type: 'temperature'
-            }
-        ];
-        saveReminders();
-    }
-}
-
-function saveReminders() {
-    localStorage.setItem('incubadora-reminders', JSON.stringify(reminders));
-}
-
-function renderReminders() {
-    const container = document.getElementById('reminders-list');
-    const today = new Date().toISOString().split('T')[0];
-    
-    let filteredReminders = reminders;
-    
-    if (currentFilter === 'today') {
-        filteredReminders = reminders.filter(r => r.date === today);
-    } else if (currentFilter === 'week') {
-        const weekFromNow = new Date();
+                <p>${idealTemperatures[bat
