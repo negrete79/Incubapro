@@ -29,25 +29,37 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Verificar se já está instalado
     if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('📱 App já está instalado');
         document.getElementById('install-btn').style.display = 'none';
     }
     
+    // Carregar dados
     loadData();
+    
+    // Configurar eventos
     setupEventListeners();
+    
+    // Iniciar atualizações
     updateTime();
     updateSensorData();
+    
+    // Configurar PWA
     setupPWA();
     
     console.log('✅ Pronto!');
 });
 
-// Carregar dados
+// Carregar dados do localStorage
 function loadData() {
-    const saved = localStorage.getItem('incubadora-batches');
-    if (saved) {
-        batches = JSON.parse(saved);
+    try {
+        const saved = localStorage.getItem('incubadora-batches');
+        if (saved) {
+            batches = JSON.parse(saved);
+        }
+        renderBatches();
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
     }
-    renderBatches();
 }
 
 // Configurar eventos
@@ -61,7 +73,7 @@ function setupEventListeners() {
     });
 }
 
-// Navegação
+// Navegação entre páginas
 function navigateToPage(pageId) {
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
@@ -72,15 +84,16 @@ function navigateToPage(pageId) {
 
 // Atualizar tempo
 function updateTime() {
-    const now = new Date();
-    document.getElementById('current-time').textContent = now.toLocaleTimeString('pt-BR');
-    setInterval(() => {
+    const updateClock = () => {
         const now = new Date();
         document.getElementById('current-time').textContent = now.toLocaleTimeString('pt-BR');
-    }, 1000);
+    };
+    
+    updateClock();
+    setInterval(updateClock, 1000);
 }
 
-// Atualizar sensores
+// Atualizar dados dos sensores
 function updateSensorData() {
     // Temperatura
     const temp = (36.5 + Math.random() * 2).toFixed(1);
@@ -116,7 +129,13 @@ function updateSensorData() {
 function setupPWA() {
     // Registrar Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+                console.log('✅ Service Worker registrado com sucesso:', registration);
+            })
+            .catch(error => {
+                console.error('❌ Erro ao registrar Service Worker:', error);
+            });
     }
     
     // Evento de instalação
@@ -130,8 +149,13 @@ function setupPWA() {
     document.getElementById('install-btn').addEventListener('click', () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
-            deferredPrompt.userChoice.then(() => {
-                document.getElementById('install-btn').style.display = 'none';
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('✅ Usuário aceitou a instalação');
+                } else {
+                    console.log('❌ Usuário recusou a instalação');
+                }
+                deferredPrompt = null;
             });
         }
     });
@@ -190,7 +214,7 @@ function renderBatches() {
     }).join('');
 }
 
-// Modal
+// Modal functions
 function openBatchModal() {
     document.getElementById('modal-title').textContent = 'Novo Lote';
     document.getElementById('batch-form').reset();
@@ -299,20 +323,29 @@ function saveBatch(event) {
         batches.push(batchData);
     }
     
-    localStorage.setItem('incubadora-batches', JSON.stringify(batches));
-    
-    renderBatches();
-    closeModal();
-    showNotification('✅ Sucesso', batchId ? 'Lote atualizado com sucesso!' : 'Lote salvo com sucesso!');
+    try {
+        localStorage.setItem('incubadora-batches', JSON.stringify(batches));
+        renderBatches();
+        closeModal();
+        showNotification('✅ Sucesso', batchId ? 'Lote atualizado com sucesso!' : 'Lote salvo com sucesso!');
+    } catch (error) {
+        console.error('Erro ao salvar dados:', error);
+        showNotification('❌ Erro', 'Não foi possível salvar os dados');
+    }
 }
 
 // Excluir lote
 function deleteBatch(id) {
     if (confirm('Tem certeza que deseja excluir este lote?')) {
         batches = batches.filter(b => b.id !== id);
-        localStorage.setItem('incubadora-batches', JSON.stringify(batches));
-        renderBatches();
-        showNotification('✅ Sucesso', 'Lote excluído com sucesso!');
+        try {
+            localStorage.setItem('incubadora-batches', JSON.stringify(batches));
+            renderBatches();
+            showNotification('✅ Sucesso', 'Lote excluído com sucesso!');
+        } catch (error) {
+            console.error('Erro ao excluir dados:', error);
+            showNotification('❌ Erro', 'Não foi possível excluir os dados');
+        }
     }
 }
 
@@ -348,4 +381,4 @@ window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         closeModal();
     }
-            }
+}
