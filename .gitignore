@@ -1,0 +1,11 @@
+# Ignora arquivos de configuração que contêm senhas
+db_config.php
+
+# Ignora a pasta onde estão os arquivos para download
+/arquivos/
+
+# Ignora arquivos de log do servidor
+*.log
+
+# Ignora a pasta de temporários do sistema
+/tmp/
