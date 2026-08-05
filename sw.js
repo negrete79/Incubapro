@@ -9,7 +9,7 @@ const ASSETS = [
     './manifest.json'
 ];
 
-// Instalar - cacheia os assets principais
+// Instalar
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -25,7 +25,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Ativar - limpa cache antigo
+// Ativar
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -41,14 +41,12 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch - network first com fallback para cache
+// Fetch
 self.addEventListener('fetch', (event) => {
-    // Ignora requisições para a API do Groq (sempre network)
     if (event.request.url.includes('api.groq.com')) {
         return;
     }
 
-    // Ignora requisições non-GET
     if (event.request.method !== 'GET') {
         return;
     }
@@ -56,7 +54,6 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Se a rede respondeu, clona e salva no cache
                 if (response && response.status === 200) {
                     const responseClone = response.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -66,12 +63,10 @@ self.addEventListener('fetch', (event) => {
                 return response;
             })
             .catch(() => {
-                // Se a rede falhou, tenta o cache
                 return caches.match(event.request).then((cachedResponse) => {
                     if (cachedResponse) {
                         return cachedResponse;
                     }
-                    // Se não tem cache e é navegação, retorna o index.html
                     if (event.request.mode === 'navigate') {
                         return caches.match('./index.html');
                     }
