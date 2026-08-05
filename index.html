@@ -262,7 +262,7 @@
         <div class="chat-header">
             <div class="chat-header-left">
                 <i class="fas fa-robot"></i>
-                <span>Assistente IA</span>
+                <span>Especialista em Avicultura</span>
             </div>
             <button class="chat-close-btn" onclick="toggleChatWindow()">
                 <i class="fas fa-times"></i>
@@ -270,7 +270,7 @@
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Digite sua dúvida..." autocomplete="off">
+            <input type="text" id="chat-input" placeholder="Pergunte sobre avicultura..." autocomplete="off">
             <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
                 <i class="fas fa-paper-plane"></i>
             </button>
@@ -302,7 +302,6 @@
         var STORAGE_KEY = 'incubadora_groq_api_key';
         var CHAT_HISTORY_KEY = 'incubadora_chat_history';
 
-        var fab = document.getElementById('chat-fab');
         var chatWindow = document.getElementById('chat-window');
         var chatMessages = document.getElementById('chat-messages');
         var chatInput = document.getElementById('chat-input');
@@ -372,7 +371,7 @@
             closeApiModal();
             updateApiSection();
             chatBadge.style.display = 'none';
-            addSystemMessage('Chave configurada com sucesso! O assistente está pronto.');
+            addSystemMessage('Chave configurada com sucesso! O especialista em avicultura está pronto.');
         };
 
         window.toggleChatWindow = function() {
@@ -542,20 +541,28 @@
                 }
             } catch(e) {}
 
-            return 'Você é o assistente especialista em incubação do IncubadoraPRO.\n' +
-                'Responda sempre em português brasileiro, de forma clara e objetiva.\n' +
-                'Seja útil com dúvidas sobre incubação, temperatura, umidade, viragem, tipos de aves e problemas comuns.\n\n' +
-                'Dados atuais da incubadora:\n' +
+            return 'Você é um Especialista Sênior em Avicultura e Ornitologia, trabalhando no sistema IncubadoraPRO.\n\n' +
+                'SUA ÚNICA FUNÇÃO é responder EXCLUSIVAMENTE sobre assuntos relacionados a AVICULTURA. Isso inclui:\n' +
+                '- Incubação de ovos (temperatura, umidade, viragem, formação do embrião, ovoscopia)\n' +
+                '- Criação de aves (galinhas, patos, codornas, gansos, perus, pavões, faisões, emas, avestruzes, etc)\n' +
+                '- Alimentação e nutrição avícola (rações, suplementos, consumo por idade)\n' +
+                '- Doenças avícolas (sintomas, prevenção, vacinas, biossegurança)\n' +
+                '- Instalações rurais (galpões, nidais, bebedouros, comedouros, iluminação)\n' +
+                '- Genética e melhoramento de raças\n' +
+                '- Comercialização de ovos e carnes\n' +
+                '- Manejo reprodutivo e cortes\n\n' +
+                'DADOS ATUAIS DA INCUBADORA DO USUÁRIO:\n' +
                 '- Temperatura: ' + temp + '°C\n' +
                 '- Umidade: ' + hum + '%\n' +
                 '- Status viragem: ' + turn + '\n' +
                 '- Próxima viragem: ' + next + '\n\n' +
-                'Lotes ativos:\n' + batchesInfo + '\n\n' +
-                'Regras:\n' +
-                '- Não invente dados que não foram fornecidos.\n' +
-                '- Se perguntarem algo fora do tema, redirecione para incubação.\n' +
+                'LOTES ATIVOS:\n' + batchesInfo + '\n\n' +
+                'REGRAS ESTRITAS:\n' +
+                '- Se o usuário perguntar sobre QUALQUER COISA que não seja avicultura (receitas, programação, futebol, política, clima, etc), RESPONDA APENAS: "Desculpe, sou especialista apenas em avicultura. Não posso responder sobre esse assunto, mas posso te ajudar com dúvidas sobre criação de aves, incubação, alimentação ou saúde avícola!"\n' +
+                '- Nunca quebre essa regra.\n' +
+                '- Responda sempre em português brasileiro, de forma clara, amigável e objetiva.\n' +
                 '- Use **negrito** para destacar informações importantes.\n' +
-                '- Respostas concisas mas completas.';
+                '- Não invente dados. Se não souber com certeza, diga e sugira consultar um médico veterinário especializado em aves.';
         }
 
         /* Inicialização */
@@ -563,11 +570,11 @@
         loadHistory();
         if (!getApiKey()) {
             chatBadge.style.display = 'block';
-            addSystemMessage('Configure sua chave API nas Configurações para usar o assistente.');
+            addSystemMessage('Configure sua chave API nas Configurações para usar o especialista em avicultura.');
         } else {
             chatBadge.style.display = 'none';
             if (chatHistory.length === 0) {
-                addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Posso ajudar com dúvidas sobre incubação.');
+                addSystemMessage('Olá! Sou o especialista em avicultura da IncubadoraPRO. Pergunte-me sobre incubação, criação, alimentação, doenças ou qualquer assunto relacionado a aves!');
             }
         }
         renderHistory();
