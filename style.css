@@ -2,7 +2,6 @@
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; overflow-x: hidden; }
 .app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #f0f2f5; position: relative; padding-bottom: 20px; }
 
-/* HEADER */
 .header { background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(13,71,161,0.3); }
 .logo { display: flex; align-items: center; gap: 10px; }
 .logo i { font-size: 1.6rem; animation: eggPulse 2s infinite ease-in-out; }
@@ -11,31 +10,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .logo h1 span { color: #64B5F6; }
 .install-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
 
-/* STATUS */
 .status { display: flex; align-items: center; gap: 8px; padding: 8px 20px; font-size: 0.78rem; color: #666; background: #e8eaed; }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4CAF50; animation: dotBlink 2s infinite; }
 @keyframes dotBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* NAV */
 .nav { display: flex; background: #fff; border-bottom: 1px solid #e0e0e0; position: sticky; top: 56px; z-index: 99; }
 .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; background: none; border: none; color: #999; font-size: 0.72rem; font-weight: 600; cursor: pointer; position: relative; }
 .nav-btn i { font-size: 1.15rem; }
 .nav-btn.active { color: #1565C0; }
 .nav-btn.active::after { content: ''; position: absolute; bottom: 0; left: 20%; width: 60%; height: 3px; background: #1565C0; border-radius: 3px 3px 0 0; }
 
-/* PAGES */
 .content { padding: 16px; }
 .page { display: none; }
 .page.active { display: block; animation: pageFade .25s ease; }
 @keyframes pageFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .time { text-align: center; font-size: 2.2rem; font-weight: 200; color: #1a1a2e; margin-bottom: 16px; letter-spacing: 2px; }
 
-/* CARDS */
 .card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; font-weight: 700; font-size: 0.92rem; color: #333; }
 .card-header i { color: #1565C0; font-size: 1rem; }
 
-/* TEMPERATURA */
 .temp-display { text-align: center; }
 .temp-value { font-size: 3rem; font-weight: 700; color: #1a1a2e; line-height: 1; }
 .temp-unit { font-size: 1.2rem; font-weight: 400; color: #999; margin-left: 2px; }
@@ -43,23 +37,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .temp-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); border-radius: 8px; transition: width .6s ease; width: 0%; }
 .temp-display small { color: #999; font-size: 0.8rem; }
 
-/* VIRAGEM */
 .heartbeat { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.1rem; font-weight: 600; }
 .heart-icon { color: #ef4444; animation: heartBeat 1.2s infinite; }
 @keyframes heartBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
+.turn-next-text { text-align: center; color: #666; font-size: 0.9rem; margin-top: 8px; }
 
-/* STATUS GRID */
 .status-grid { display: flex; flex-direction: column; gap: 10px; }
 .status-item { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: #555; }
 .status-item i { color: #4CAF50; width: 20px; text-align: center; }
 
-/* BOTÕES */
 .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; border: none; border-radius: 10px; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
 .btn:active { transform: scale(0.97); }
 .btn-secondary { background: #e8eaed; color: #555; }
 .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
-/* LOTES */
 .empty-state { text-align: center; padding: 40px 20px; color: #bbb; }
 .empty-state i { font-size: 3rem; margin-bottom: 12px; display: block; }
 .batch-item { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
@@ -71,7 +62,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #e0e0e0; background: #f8f9fa; color: #555; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
 .icon-btn.delete { color: #ef4444; border-color: #fecaca; }
 
-/* MODAIS */
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
 .modal-content { background: #fff; border-radius: 16px; width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto; padding: 24px; animation: modalPop .25s ease; }
 @keyframes modalPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
@@ -79,16 +69,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .modal-header h3 { font-size: 1.1rem; color: #1a1a2e; }
 .close-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #f0f0f0; font-size: 1.3rem; color: #666; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-/* FORMULÁRIOS */
 .form-group { margin-bottom: 14px; }
 .form-group label { display: block; font-size: 0.84rem; font-weight: 600; color: #555; margin-bottom: 6px; }
-.form-group input:not([type="checkbox"]), .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 2px solid #e8eaed; border-radius: 10px; font-size: 0.9rem; color: #333; background: #fafafa; outline: none; transition: border-color .2s, background .2s; }
+.form-group input:not([type="checkbox"]), .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 2px solid #e8eaed; border-radius: 10px; font-size: 0.9rem; color: #333; background: #fafafa; outline: none; }
 .form-group input:not([type="checkbox"]):focus, .form-group select:focus, .form-group textarea:focus { border-color: #1565C0; background: #fff; }
 .form-group textarea { resize: vertical; font-family: inherit; }
 .form-actions { display: flex; gap: 10px; margin-top: 18px; }
 .form-actions .btn { flex: 1; }
 
-/* TOGGLES (CHECKBOXES GRANDES) */
 .settings-toggles { display: flex; flex-direction: column; gap: 16px; }
 .toggle-label { display: flex; align-items: center; justify-content: space-between; font-size: 1rem; font-weight: 500; color: #333; cursor: pointer; }
 .toggle-switch { position: relative; width: 56px; height: 30px; flex-shrink: 0; }
@@ -98,7 +86,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .toggle-switch input:checked + .toggle-slider { background-color: #1565C0; }
 .toggle-switch input:checked + .toggle-slider:before { transform: translateX(26px); }
 
-/* DETALHES E PROGRESSO */
 .batch-details { display: flex; flex-direction: column; gap: 12px; }
 .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
 .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -107,22 +94,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .progress-bar { width: 100%; height: 10px; background: #e8eaed; border-radius: 10px; overflow: hidden; margin-top: 4px; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, #1565C0, #42A5F5); border-radius: 10px; transition: width .6s ease; }
 
-/* TOAST NOTIFICATIONS */
 .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #fff; padding: 14px 22px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); z-index: 99999; max-width: 90%; animation: toastIn .3s ease; transition: opacity .3s; }
 @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-/* FOOTER */
 .footer { text-align: center; padding: 24px 20px 30px; color: #999; font-size: 0.8rem; }
 .footer p { margin-bottom: 10px; }
 .social-links { display: flex; justify-content: center; gap: 18px; }
-.social-links a { color: #bbb; font-size: 1.3rem; transition: color .2s, transform .2s; }
+.social-links a { color: #bbb; font-size: 1.3rem; }
 .social-links a:hover { color: #1565C0; transform: translateY(-2px); }
 
-
-/* ===================================================================
-   ESTILOS DO CHAT GROQ (Totalmente isolados no final do arquivo)
-   =================================================================== */
-
+/* === CHAT GROQ === */
 .chat-fab { position: fixed; bottom: 100px; right: 18px; width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; border: none; box-shadow: 0 4px 18px rgba(21,101,192,0.45); cursor: pointer; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; }
 .chat-fab:active { transform: scale(0.92); }
 .chat-badge-dot { position: absolute; top: 3px; right: 3px; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; border: 2px solid #fff; display: none; }
@@ -150,8 +131,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 @keyframes chatBounce { to { transform: translateY(-6px); opacity: .4; } }
 
 .chat-input-area { display: flex; align-items: center; gap: 10px; padding: 14px 16px; padding-bottom: max(14px, env(safe-area-inset-bottom)); background: #16162a; border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
-
-/* Campo de digitação com letra 100% visível */
 .chat-input-area input { flex: 1; background: #0f0f2a !important; border: 2px solid #3a3a5a !important; border-radius: 28px !important; padding: 16px 20px !important; color: #ffffff !important; font-size: 1.15rem !important; font-weight: 500 !important; outline: none !important; caret-color: #64B5F6 !important; -webkit-appearance: none !important; appearance: none !important; }
 .chat-input-area input::placeholder { color: #7a7a9e !important; font-size: 1rem !important; }
 .chat-input-area input:focus { border-color: #1565C0 !important; background: #1a1a3a !important; }
@@ -160,14 +139,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .chat-send-btn:disabled { opacity: .4; cursor: not-allowed; }
 
 .chat-api-trigger { display: flex; align-items: center; gap: 12px; width: 100%; padding: 15px 18px; background: linear-gradient(135deg, #1565C0, #1976D2); color: #fff; border: none; border-radius: 10px; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
-.chat-api-trigger:active { transform: scale(0.97); }
 
 .api-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 20000; display: none; align-items: center; justify-content: center; }
 .api-modal-overlay.open { display: flex; }
 .api-modal-box { background: #fff; border-radius: 16px; width: 90%; max-width: 400px; padding: 28px 24px 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: modalPop .25s ease; }
 .api-modal-box h3 { margin: 0 0 6px; font-size: 1.15rem; color: #1a1a2e; }
 .api-modal-box p { margin: 0 0 18px; font-size: 0.82rem; color: #888; line-height: 1.5; }
-.api-modal-box input { width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color .2s; box-sizing: border-box; }
+.api-modal-box input { width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.9rem; outline: none; box-sizing: border-box; }
 .api-modal-box input:focus { border-color: #1565C0; }
 .api-modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
 .api-modal-actions button { padding: 10px 22px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; }
