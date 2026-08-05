@@ -189,14 +189,24 @@
         function hideTyping(){var el=document.getElementById('typing-ind');if(el)el.remove();}
         function scrollBottom(){requestAnimationFrame(function(){chatMessages.scrollTop=chatMessages.scrollHeight;});}
 
-        // Função do barulhinho
-        function playBeep(freq, dur) {
+        // Som estilo "pop" do ChatGPT (suave, não bip agudo)
+        function playPopSound() {
             try {
                 var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                var osc = ctx.createOscillator(); var gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.frequency.value = freq; osc.type = 'sine'; gain.gain.value = 0.4;
-                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + dur);
+                var osc = ctx.createOscillator(); 
+                var gain = ctx.createGain();
+                osc.connect(gain); 
+                gain.connect(ctx.destination);
+                
+                // Curva de frequência que desce suavemente (pop)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                
+                osc.start(ctx.currentTime); 
+                osc.stop(ctx.currentTime + 0.12);
             } catch(e) {}
         }
 
@@ -209,16 +219,16 @@
             isGenerating=true; 
             chatSendBtn.disabled=true; 
             showTyping();
-            playBeep(1200, 0.08); // Barulho ao enviar
+            playPopSound(); // Som suave ao enviar
 
             try{
                 var msgs=[{role:'system', content: buildPrompt()}];
                 var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
                 for(var i=0;i<recent.length;i++)msgs.push(recent[i]);
-                var resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
+                var resp=await fetch('https://api.groq.openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
                 hideTyping();
                 if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
-                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playBeep(800, 0.1);} // Barulho ao receber
+                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playPopSound();} // Som suave ao receber
             }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
             
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
