@@ -189,7 +189,7 @@
         <div class="chat-header">
             <div class="chat-header-left">
                 <i class="fas fa-robot"></i>
-                <span>Especialista em Avicultura</span>
+                <span>Assistente IncubadoraPRO</span>
             </div>
             <button class="chat-close-btn" onclick="toggleChatWindow()">
                 <i class="fas fa-times"></i>
@@ -197,7 +197,7 @@
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Pergunte sobre avicultura..." autocomplete="off">
+            <input type="text" id="chat-input" placeholder="Digite sua dúvida..." autocomplete="off">
             <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
                 <i class="fas fa-paper-plane"></i>
             </button>
@@ -239,7 +239,7 @@
         window.saveApiKey=function(){
             var key=apiKeyInput.value.trim(); if(!key){apiKeyInput.focus();return;}
             try{localStorage.setItem(STORAGE_KEY,key);}catch(e){} apiKeyInput.value=''; closeApiModal(); updateApiSection(); chatBadge.style.display='none';
-            addSystemMessage('Chave salva! Especialista em avicultura ativado.');
+            addSystemMessage('Chave salva! O assistente está pronto.');
         };
 
         window.toggleChatWindow=function(){
@@ -262,7 +262,7 @@
             var apiKey=getApiKey(); if(!apiKey){addSystemMessage('Configure a chave API em Config > Assistente IA.');return;}
             appendBubble('user',text); chatInput.value=''; isGenerating=true; chatSendBtn.disabled=true; showTyping();
             try{
-                var msgs=[{role:'system',content:'Você é um Especialista Sênior em Avicultura. Responda APENAS sobre aves (incubação, criação, alimentação, doenças). Se perguntarem outra coisa, diga: "Desculpe, sou especialista apenas em avicultura". Responda em PT-BR. Use **negrito** para destacar.'}];
+                var msgs=[{role:'system', content: buildPrompt()}];
                 var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
                 for(var i=0;i<recent.length;i++)msgs.push(recent[i]);
                 var resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
@@ -273,11 +273,53 @@
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
         };
 
+        function buildPrompt() {
+            var tempEl = document.getElementById('temp-value');
+            var humEl = document.getElementById('humidity-value');
+            var turnEl = document.getElementById('turn-status');
+            var nextEl = document.getElementById('next-turn');
+            var temp = tempEl ? tempEl.textContent : '--';
+            var hum = humEl ? humEl.textContent : '--';
+            var turn = turnEl ? turnEl.textContent : '--';
+            var next = nextEl ? nextEl.textContent : '--';
+
+            var batchesInfo = 'Nenhum lote ativo no momento.';
+            try {
+                var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
+                if (b.length > 0) {
+                    var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão' };
+                    batchesInfo = '';
+                    for(var i=0; i<b.length; i++) {
+                        var x = b[i];
+                        var nome = names[x.birdType] || x.birdType;
+                        var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24));
+                        batchesInfo += '- Lote #' + x.id + ': ' + nome + ', ' + x.eggCount + ' ovos, iniciado há ' + dias + ' dias.\n';
+                    }
+                }
+            } catch(e) {}
+
+            return 'Você é o assistente virtual do sistema IncubadoraPRO, um aplicativo profissional para controle de incubadoras e avicultura.\n\n' +
+                'SUA PERSONALIDADE:\n' +
+                '- Se perguntarem "quem é você" ou similar, diga que você é o assistente do IncubadoraPRO, especialista em avicultura.\n' +
+                '- Seja sempre amigável, prestativo e responda em português brasileiro.\n' +
+                '- Use **negrito** para destacar informações importantes.\n\n' +
+                'DADOS ATUAIS DO SISTEMA DO USUÁRIO (LEIA E USE ISSO NAS RESPOSTAS):\n' +
+                '- Temperatura atual: ' + temp + '°C\n' +
+                '- Umidade atual: ' + hum + '%\n' +
+                '- Status da viragem: ' + turn + '\n' +
+                '- Próxima viragem: ' + next + '\n' +
+                '- Lotes ativos:\n' + batchesInfo + '\n\n' +
+                'REGRAS:\n' +
+                '- Você PODE responder sobre qualquer assunto, mas seu foco principal é avicultura, criação de aves, incubação, alimentação e doenças.\n' +
+                '- Quando alguém perguntar sobre o app, who you are, ou status atual, use os dados do sistema que foram fornecidos acima para dar uma resposta exata (ex: "Você tem 1 lote de codorna com 33 ovos").\n' +
+                '- Não invente dados que não foram fornecidos.';
+        }
+
         updateApiSection(); loadHistory();
         if(!getApiKey()){chatBadge.style.display='block';addSystemMessage('Configure a chave API nas Configurações.');}
-        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o especialista em avicultura. Pergunte-me sobre aves!');}
+        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Pergunte-me sobre seu sistema, avicultura ou qualquer dúvida!');}
         renderHistory();
     })();
     </script>
 </body>
-    </html>
+</html>
