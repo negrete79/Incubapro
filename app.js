@@ -33,11 +33,17 @@ function updateSensorData() {
     const temp = (36.5 + Math.random() * 2).toFixed(1);
     document.getElementById('temp-value').textContent = temp;
     document.getElementById('temp-fill').style.width = `${(temp - 36) * 50}%`;
-    const humidity = Math.floor(50 + Math.random() * 10);
+    
+    const humidity = Math.floor(50 + Math.random()  * 10);
     document.getElementById('humidity-value').textContent = humidity;
-    document.getElementById('humidity-fill').style/style.width = `${(humidity - 50) * 10}%`;
-    const now = new Date(); const nextTurn = new Date(now); nextTurn.setHours(now.getHours() + 2); nextTurn.setMinutes(0);
+    document.getElementById('humidity-fill').style.width = `${(humidity - 50) * 10}%`;
+    
+    const now = new Date(); 
+    const nextTurn = new Date(now); 
+    nextTurn.setHours(now.getHours() + 2); 
+    nextTurn.setMinutes(0);
     document.getElementById('next-turn').textContent = nextTurn.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+    
     setTimeout(updateSensorData, 5000);
 }
 
@@ -67,7 +73,6 @@ function setupPWA() {
     window.addEventListener('appinstalled', () => { document.getElementById('install-btn').style.display = 'none'; showNotification('🎉 Instalado', 'App instalado com sucesso!'); });
 }
 
-// Função universal de cálculo de progresso (Mínimo de 1% depois do 1º dia)
 function calcProgress(startDate, birdType) {
     const incubationDays = incubationPeriods[birdType] || 21;
     const days = Math.floor((new Date() - new Date(startDate)) / (1000*60*60*24));
