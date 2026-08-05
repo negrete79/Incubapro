@@ -156,8 +156,9 @@
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
+            <!-- REMOVIDO O ONCLICK AQUI PARA EVITAR DUPLICIDADE COM O APP.JS -->
             <input type="text" id="chat-input" placeholder="Digite sua dúvida..." autocomplete="off">
-            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+            <button class="chat-send-btn" id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -182,6 +183,8 @@
         var chatBadge=document.getElementById('chat-badge'), apiModal=document.getElementById('api-modal');
         var apiKeyInput=document.getElementById('api-key-input'), chatApiSection=document.getElementById('chat-api-section');
 
+        // Eventos controlados apenas aqui, sem depender do onclick do HTML
+        chatSendBtn.addEventListener('click', sendChatMessage);
         chatInput.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMessage();} });
         document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ if(apiModal.classList.contains('open'))closeApiModal(); else if(chatOpen)toggleChatWindow(); }});
 
@@ -206,61 +209,6 @@
             else{chatWindow.classList.remove('open');}
         };
 
-        /* ===== SOM ESTILO CHATGPT ===== */
-        function playChatGPTSend() {
-            // Som de envio: um "pop" curto e seco, igualzinho ao ChatGPT
-            try {
-                var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                var osc = ctx.createOscillator();
-                var gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.06);
-                gain.gain.setValueAtTime(0.35, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.08);
-            } catch(e) {}
-        }
-
-        function playChatGPTReceive() {
-            // Som de recebimento: dois "pops" rápidos em sequência, o característico do ChatGPT
-            try {
-                var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                var now = ctx.currentTime;
-
-                // Primeiro pop (mais agudo)
-                var osc1 = ctx.createOscillator();
-                var gain1 = ctx.createGain();
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(1047, now);
-                osc1.frequency.exponentialRampToValueAtTime(587, now + 0.05);
-                gain1.gain.setValueAtTime(0.25, now);
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-                osc1.start(now);
-                osc1.stop(now + 0.07);
-
-                // Segundo pop (mais grave, 80ms depois)
-                var osc2 = ctx.createOscillator();
-                var gain2 = ctx.createGain();
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(784, now + 0.08);
-                osc2.frequency.exponentialRampToValueAtTime(392, now + 0.13);
-                gain2.gain.setValueAtTime(0.001, now);
-                gain2.gain.setValueAtTime(0.2, now + 0.08);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
-                osc2.start(now + 0.08);
-                osc2.stop(now + 0.15);
-            } catch(e) {}
-        }
-        /* ============================= */
-
         window.clearChat=function(){
             chatHistory=[];
             persistHistory();
@@ -268,6 +216,40 @@
             addSystemMessage('Conversa limpa. Como posso ajudar?');
             playChatGPTSend();
         };
+
+        /* ===== SOM ESTILO CHATGPT ===== */
+        function playChatGPTSend() {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                var osc = ctx.createOscillator(); var gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.06);
+                gain.gain.setValueAtTime(0.35, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        function playChatGPTReceive() {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                var now = ctx.currentTime;
+                var osc1 = ctx.createOscillator(); var gain1 = ctx.createGain();
+                osc1.connect(gain1); gain1.connect(ctx.destination); osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(1047, now); osc1.frequency.exponentialRampToValueAtTime(587, now + 0.05);
+                gain1.gain.setValueAtTime(0.25, now); gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc1.start(now); osc1.stop(now + 0.07);
+                var osc2 = ctx.createOscillator(); var gain2 = ctx.createGain();
+                osc2.connect(gain2); gain2.connect(ctx.destination); osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(784, now + 0.08); osc2.frequency.exponentialRampToValueAtTime(392, now + 0.13);
+                gain2.gain.setValueAtTime(0.001, now); gain2.gain.setValueAtTime(0.2, now + 0.08);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+                osc2.start(now + 0.08); osc2.stop(now + 0.15);
+            } catch(e) {}
+        }
+        /* ============================= */
 
         function loadHistory(){try{var d=localStorage.getItem('incubadora_chat_history');if(d)chatHistory=JSON.parse(d);}catch(e){chatHistory=[];}}
         function persistHistory(){try{localStorage.setItem('incubadora_chat_history',JSON.stringify(chatHistory.slice(-50)));}catch(e){}}
@@ -278,7 +260,7 @@
         function hideTyping(){var el=document.getElementById('typing-ind');if(el)el.remove();}
         function scrollBottom(){requestAnimationFrame(function(){chatMessages.scrollTop=chatMessages.scrollHeight;});}
 
-        window.sendChatMessage=async function(){
+        async function sendChatMessage(){
             var text=chatInput.value.trim(); if(!text||isGenerating)return;
             var apiKey=getApiKey(); if(!apiKey){addSystemMessage('Configure a chave API em Config > Assistente IA.');return;}
             
@@ -287,7 +269,7 @@
             isGenerating=true; 
             chatSendBtn.disabled=true; 
             showTyping();
-            playChatGPTSend(); // Som de envio estilo ChatGPT
+            playChatGPTSend();
 
             try{
                 var msgs=[{role:'system', content: buildPrompt()}];
@@ -296,7 +278,7 @@
                 var resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
                 hideTyping();
                 if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
-                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playChatGPTReceive();} // Som de recebimento estilo ChatGPT
+                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playChatGPTReceive();}
             }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
             
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
@@ -325,4 +307,21 @@
 
             return 'Você é o assistente virtual do sistema IncubadoraPRO.\n\n' +
                 'SUA PERSONALIDADE:\n' +
-                '- Se perguntarem quem é você,
+                '- Se perguntarem quem é você, diga que é o assistente do IncubadoraPRO.\n' +
+                '- Responda em português brasileiro, de forma amigável.\n' +
+                '- Use **negrito** para destacar informações.\n\n' +
+                'DADOS ATUAIS DO SISTEMA (USE ISSO NAS RESPOSTAS):\n' +
+                '- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\n' +
+                'REGRAS:\n' +
+                '- Responda sobre qualquer assunto, mas foco em avicultura.\n' +
+                '- Se perguntarem sobre o app, use os dados reais acima para responder (ex: diga quantos ovos e de qual ave).';
+        }
+
+        updateApiSection(); loadHistory();
+        if(!getApiKey()){chatBadge.style.display='block';addSystemMessage('Configure a chave API nas Configurações.');}
+        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Pergunte-me sobre seu sistema ou avicultura!');}
+        renderHistory();
+    })();
+    </script>
+</body>
+</html>
