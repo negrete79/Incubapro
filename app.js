@@ -35,7 +35,7 @@ function updateSensorData() {
     document.getElementById('temp-fill').style.width = `${(temp - 36) * 50}%`;
     const humidity = Math.floor(50 + Math.random() * 10);
     document.getElementById('humidity-value').textContent = humidity;
-    document.getElementById('humidity-fill').style.width = `${(humidity - 50) * 10}%`;
+    document.getElementById('humidity-fill').style/style.width = `${(humidity - 50) * 10}%`;
     const now = new Date(); const nextTurn = new Date(now); nextTurn.setHours(now.getHours() + 2); nextTurn.setMinutes(0);
     document.getElementById('next-turn').textContent = nextTurn.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
     setTimeout(updateSensorData, 5000);
@@ -67,14 +67,13 @@ function setupPWA() {
     window.addEventListener('appinstalled', () => { document.getElementById('install-btn').style.display = 'none'; showNotification('🎉 Instalado', 'App instalado com sucesso!'); });
 }
 
-// Função auxiliar para calcular o progresso corretamente (mínimo de 1%)
+// Função universal de cálculo de progresso (Mínimo de 1% depois do 1º dia)
 function calcProgress(startDate, birdType) {
     const incubationDays = incubationPeriods[birdType] || 21;
     const days = Math.floor((new Date() - new Date(startDate)) / (1000*60*60*24));
-    // Se passou do dia 0, já é pelo menos 1%. Se passou do total, limita em 100%.
-    if (days > 0 && days < incubationDays) return Math.max(1, Math.floor((days / incubationDays) * 100));
+    if (days <= 0) return 0;
     if (days >= incubationDays) return 100;
-    return 0;
+    return Math.max(1, Math.floor((days / incubationDays) * 100));
 }
 
 function renderBatches() {
