@@ -33,17 +33,11 @@ function updateSensorData() {
     const temp = (36.5 + Math.random() * 2).toFixed(1);
     document.getElementById('temp-value').textContent = temp;
     document.getElementById('temp-fill').style.width = `${(temp - 36) * 50}%`;
-    
-    const humidity = Math.floor(50 + Math.random()  * 10);
+    const humidity = Math.floor(50 + Math.random() * 10);
     document.getElementById('humidity-value').textContent = humidity;
     document.getElementById('humidity-fill').style.width = `${(humidity - 50) * 10}%`;
-    
-    const now = new Date(); 
-    const nextTurn = new Date(now); 
-    nextTurn.setHours(now.getHours() + 2); 
-    nextTurn.setMinutes(0);
+    const now = new Date(); const nextTurn = new Date(now); nextTurn.setHours(now.getHours() + 2); nextTurn.setMinutes(0);
     document.getElementById('next-turn').textContent = nextTurn.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-    
     setTimeout(updateSensorData, 5000);
 }
 
@@ -73,21 +67,15 @@ function setupPWA() {
     window.addEventListener('appinstalled', () => { document.getElementById('install-btn').style.display = 'none'; showNotification('🎉 Instalado', 'App instalado com sucesso!'); });
 }
 
-function calcProgress(startDate, birdType) {
-    const incubationDays = incubationPeriods[birdType] || 21;
-    const days = Math.floor((new Date() - new Date(startDate)) / (1000*60*60*24));
-    if (days <= 0) return 0;
-    if (days >= incubationDays) return 100;
-    return Math.max(1, Math.floor((days / incubationDays) * 100));
-}
-
 function renderBatches() {
     const container = document.getElementById('batches-container');
     if (batches.length === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-egg"></i><p>Nenhum lote cadastrado</p></div>'; return; }
     container.innerHTML = batches.map(batch => {
-        const progress = calcProgress(batch.startDate, batch.birdType);
-        const status = progress < 100 ? 'Ativo' : 'Concluído';
-        return `<div class="batch-item"><div class="batch-header"><div class="batch-title">Lote #${batch.id}</div><div class="batch-status">${status}</div></div><div class="batch-info"><div>🐔 ${birdTypeNames[batch.birdType]} - ${batch.eggCount} ovos</div><div>📅 Início: ${new Date(batch.startDate).toLocaleDateString('pt-BR')}</div><div>📊 Progresso: ${progress}%</div></div><div class="batch-actions"><button class="icon-btn" onclick="viewBatchDetails(${batch.id})"><i class="fas fa-eye"></i></button><button class="icon-btn" onclick="editBatch(${batch.id})"><i class="fas fa-edit"></i></button><button class="icon-btn delete" onclick="deleteBatch(${batch.id})"><i class="fas fa-trash"></i></button></div></div>`;
+        const days = Math.floor((new Date() - new Date(batch.startDate)) / (1000*60*60*24));
+        const incubationDays = incubationPeriods[batch.birdType] || 21;
+        const progress = Math.min(100, (days / incubationDays) * 100);
+        const status = days < incubationDays ? 'Ativo' : 'Concluído';
+        return `<div class="batch-item"><div class="batch-header"><div class="batch-title">Lote #${batch.id}</div><div class="batch-status">${status}</div></div><div class="batch-info"><div>🐔 ${birdTypeNames[batch.birdType]} - ${batch.eggCount} ovos</div><div>📅 Início: ${new Date(batch.startDate).toLocaleDateString('pt-BR')}</div><div>📊 Progresso: ${progress.toFixed(0)}%</div></div><div class="batch-actions"><button class="icon-btn" onclick="viewBatchDetails(${batch.id})"><i class="fas fa-eye"></i></button><button class="icon-btn" onclick="editBatch(${batch.id})"><i class="fas fa-edit"></i></button><button class="icon-btn delete" onclick="deleteBatch(${batch.id})"><i class="fas fa-trash"></i></button></div></div>`;
     }).join('');
 }
 
@@ -96,11 +84,11 @@ function closeModal() { document.querySelectorAll('.modal').forEach(modal => { m
 
 function viewBatchDetails(id) {
     const batch = batches.find(b => b.id === id); if (!batch) return;
-    const incubationDays = incubationPeriods[batch.birdType] || 21;
     const days = Math.floor((new Date() - new Date(batch.startDate)) / (1000*60*60*24));
-    const progress = calcProgress(batch.startDate, batch.birdType);
+    const incubationDays = incubationPeriods[batch.birdType] || 21;
+    const progress = Math.min(100, (days / incubationDays) * 100);
     const hatchDate = new Date(batch.startDate); hatchDate.setDate(hatchDate.getDate() + incubationDays);
-    document.getElementById('batch-details-content').innerHTML = `<div class="batch-details"><div class="detail-row"><span class="detail-label">ID:</span><span class="detail-value">#${batch.id}</span></div><div class="detail-row"><span class="detail-label">Ave:</span><span class="detail-value">${birdTypeNames[batch.birdType]}</span></div><div class="detail-row"><span class="detail-label">Início:</span><span class="detail-value">${new Date(batch.startDate).toLocaleDateString('pt-BR')}</span></div><div class="detail-row"><span class="detail-label">Ovos:</span><span class="detail-value">${batch.eggCount}</span></div><div class="detail-row"><span class="detail-label">Dias:</span><span class="detail-value">${days}</span></div><div class="detail-row"><span class="detail-label">Eclosão:</span><span class="detail-value">${hatchDate.toLocaleDateString('pt-BR')}</span></div><div class="detail-row"><span class="detail-label">Progresso:</span><span class="detail-value">${progress}%</span></div><div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>${batch.notes ? `<div class="detail-row"><span class="detail-label">Obs:</span><span class="detail-value">${batch.notes}</span></div>` : ''}</div>`;
+    document.getElementById('batch-details-content').innerHTML = `<div class="batch-details"><div class="detail-row"><span class="detail-label">ID:</span><span class="detail-value">#${batch.id}</span></div><div class="detail-row"><span class="detail-label">Ave:</span><span class="detail-value">${birdTypeNames[batch.birdType]}</span></div><div class="detail-row"><span class="detail-label">Início:</span><span class="detail-value">${new Date(batch.startDate).toLocaleDateString('pt-BR')}</span></div><div class="detail-row"><span class="detail-label">Ovos:</span><span class="detail-value">${batch.eggCount}</span></div><div class="detail-row"><span class="detail-label">Dias:</span><span class="detail-value">${days}</span></div><div class="detail-row"><span class="detail-label">Eclosão:</span><span class="detail-value">${hatchDate.toLocaleDateString('pt-BR')}</span></div><div class="detail-row"><span class="detail-label">Progresso:</span><span class="detail-value">${progress.toFixed(1)}%</span></div><div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>${batch.notes ? `<div class="detail-row"><span class="detail-label">Obs:</span><span class="detail-value">${batch.notes}</span></div>` : ''}</div>`;
     document.getElementById('details-modal').style.display = 'flex';
 }
 
