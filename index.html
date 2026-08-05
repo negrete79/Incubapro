@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Botão limpar conversa */
         .chat-clear-btn {
             background: none;
             border: none;
@@ -35,6 +36,17 @@
         }
         .chat-clear-btn i {
             font-size: 0.75rem;
+        }
+
+        /* Ovo rodando no lugar do coração */
+        .egg-spin {
+            display: inline-block;
+            animation: spinEgg 2s linear infinite;
+            font-size: 1.2rem;
+        }
+        @keyframes spinEgg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -75,7 +87,11 @@
                 </div>
                 <div class="card">
                     <div class="card-header"><span>Viragem</span><i class="fas fa-sync-alt"></i></div>
-                    <div class="heartbeat"><i class="fas fa-heart heart-icon"></i><span id="turn-status">Aguardando</span></div>
+                    <div class="heartbeat">
+                        <!-- TROCA DO CORAÇÃO PELO OVO RODANDO -->
+                        <span class="egg-spin">🥚</span>
+                        <span id="turn-status">Aguardando</span>
+                    </div>
                     <div class="turn-next-text">Próxima: <span id="next-turn">--:--</span></div>
                 </div>
                 <div class="card">
@@ -289,6 +305,7 @@
             try {
                 var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
                 if (b.length > 0) {
+                    // CORRIGIDO: Adicionada a Calopsita aqui também para o chat não quebrar
                     var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão', cockatiel:'Calopsita' };
                     batchesInfo = '';
                     for(var i=0; i<b.length; i++) {
@@ -302,11 +319,4 @@
 
             return 'Você é o assistente virtual do sistema IncubadoraPRO.\n\n' +
                 'SUA PERSONALIDADE:\n' +
-                '- Se perguntarem quem é você, diga que é o assistente do IncubadoraPRO.\n' +
-                '- Responda em português brasileiro, de forma amigável.\n' +
-                '- Use **negrito** para destacar informações.\n\n' +
-                'DADOS ATUAIS DO SISTEMA (USE ISSO NAS RESPOSTAS):\n' +
-                '- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\n' +
-                'REGRAS:\n' +
-                '- Responda sobre qualquer assunto, mas foco em avicultura.\n' +
-                '- Se perguntarem sobre o app, use os dados reais
+                '- Se perguntarem quem é você, diga que é o assistente
