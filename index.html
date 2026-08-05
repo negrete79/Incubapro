@@ -16,37 +16,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Botão limpar conversa */
         .chat-clear-btn {
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.5);
-            font-size: 0.85rem;
-            cursor: pointer;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            background: none; border: none; color: rgba(255,255,255,0.5);
+            font-size: 0.85rem; cursor: pointer; padding: 6px 10px;
+            border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; gap: 5px;
         }
-        .chat-clear-btn:hover {
-            color: #ff5252;
-            background: rgba(255,82,82,0.12);
-        }
-        .chat-clear-btn i {
-            font-size: 0.75rem;
-        }
-
-        /* Ovo rodando no lugar do coração */
-        .egg-spin {
-            display: inline-block;
-            animation: spinEgg 2s linear infinite;
-            font-size: 1.2rem;
-        }
-        @keyframes spinEgg {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .chat-clear-btn:hover { color: #ff5252; background: rgba(255,82,82,0.12); }
+        .chat-clear-btn i { font-size: 0.75rem; }
+        .egg-spin { display: inline-block; animation: spinEgg 2s linear infinite; font-size: 1.2rem; }
+        @keyframes spinEgg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .notification-btn {
+            display: inline-block; margin-top: 8px; padding: 5px 10px;
+            background: #2e7d32; color: white; border: none; border-radius: 4px;
+            font-size: 0.85rem; cursor: pointer; font-weight: bold;
         }
     </style>
 </head>
@@ -88,7 +70,6 @@
                 <div class="card">
                     <div class="card-header"><span>Viragem</span><i class="fas fa-sync-alt"></i></div>
                     <div class="heartbeat">
-                        <!-- TROCA DO CORAÇÃO PELO OVO RODANDO -->
                         <span class="egg-spin">🥚</span>
                         <span id="turn-status">Aguardando</span>
                     </div>
@@ -230,12 +211,26 @@
             playChatGPTSend();
         };
 
+        // Função global para o botão "Dar como Feita" da ovoscopia
+        window.markOvoscopiaDone = function(batchId, day) {
+            try {
+                var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
+                var index = b.findIndex(function(x){ return x.id == batchId; });
+                if (index !== -1) {
+                    if(!b[index].ovoscopiaDone) b[index].ovoscopiaDone = [];
+                    if(!b[index].ovoscopiaDone.includes(day)) {
+                        b[index].ovoscopiaDone.push(day);
+                        localStorage.setItem('incubadora-batches', JSON.stringify(b));
+                    }
+                }
+            } catch(e) {}
+        };
+
         function playChatGPTSend() {
             try {
                 var ctx = new (window.AudioContext || window.webkitAudioContext)();
                 var osc = ctx.createOscillator(); var gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.type = 'sine';
+                osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine';
                 osc.frequency.setValueAtTime(880, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.06);
                 gain.gain.setValueAtTime(0.35, ctx.currentTime);
@@ -246,8 +241,7 @@
 
         function playChatGPTReceive() {
             try {
-                var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                var now = ctx.currentTime;
+                var ctx = new (window.AudioContext || window.webkitAudioContext)(); var now = ctx.currentTime;
                 var osc1 = ctx.createOscillator(); var gain1 = ctx.createGain();
                 osc1.connect(gain1); gain1.connect(ctx.destination); osc1.type = 'sine';
                 osc1.frequency.setValueAtTime(1047, now); osc1.frequency.exponentialRampToValueAtTime(587, now + 0.05);
@@ -274,14 +268,7 @@
         async function sendChatMessage(){
             var text=chatInput.value.trim(); if(!text||isGenerating)return;
             var apiKey=getApiKey(); if(!apiKey){addSystemMessage('Configure a chave API em Config > Assistente IA.');return;}
-            
-            appendBubble('user',text); 
-            chatInput.value=''; 
-            isGenerating=true; 
-            chatSendBtn.disabled=true; 
-            showTyping();
-            playChatGPTSend();
-
+            appendBubble('user',text); chatInput.value=''; isGenerating=true; chatSendBtn.disabled=true; showTyping(); playChatGPTSend();
             try{
                 var msgs=[{role:'system', content: buildPrompt()}];
                 var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
@@ -291,7 +278,6 @@
                 if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
                 else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playChatGPTReceive();}
             }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
-            
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
         };
 
@@ -300,33 +286,20 @@
             var hum = document.getElementById('humidity-value') ? document.getElementById('humidity-value').textContent : '--';
             var turn = document.getElementById('turn-status') ? document.getElementById('turn-status').textContent : '--';
             var next = document.getElementById('next-turn') ? document.getElementById('next-turn').textContent : '--';
-
             var batchesInfo = 'Nenhum lote ativo no momento.';
             try {
                 var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
                 if (b.length > 0) {
-                    // CORRIGIDO: Adicionada a Calopsita aqui também para o chat não quebrar
                     var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão', cockatiel:'Calopsita' };
                     batchesInfo = '';
                     for(var i=0; i<b.length; i++) {
-                        var x = b[i];
-                        var nome = names[x.birdType] || x.birdType;
+                        var x = b[i]; var nome = names[x.birdType] || x.birdType;
                         var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24));
                         batchesInfo += '- Lote #' + x.id + ': ' + nome + ', ' + x.eggCount + ' ovos, iniciado há ' + dias + ' dias.\n';
                     }
                 }
             } catch(e) {}
-
-            return 'Você é o assistente virtual do sistema IncubadoraPRO.\n\n' +
-                'SUA PERSONALIDADE:\n' +
-                '- Se perguntarem quem é você, diga que é o assistente do IncubadoraPRO.\n' +
-                '- Responda em português brasileiro, de forma amigável.\n' +
-                '- Use **negrito** para destacar informações.\n\n' +
-                'DADOS ATUAIS DO SISTEMA (USE ISSO NAS RESPOSTAS):\n' +
-                '- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\n' +
-                'REGRAS:\n' +
-                '- Responda sobre qualquer assunto, mas foco em avicultura.\n' +
-                '- Se perguntarem sobre o app, use os dados reais acima para responder (ex: diga quantos ovos e de qual ave).';
+            return 'Você é o assistente virtual do sistema IncubadoraPRO.\n\nSUA PERSONALIDADE:\n- Se perguntarem quem é você, diga que é o assistente do IncubadoraPRO.\n- Responda em português brasileiro, de forma amigável.\n- Use **negrito** para destacar informações.\n\nDADOS ATUAIS DO SISTEMA (USE ISSO NAS RESPOSTAS):\n- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\nREGRAS:\n- Responda sobre qualquer assunto, mas foco em avicultura.\n- Se perguntarem sobre o app, use os dados reais acima para responder (ex: diga quantos ovos e de qual ave).';
         }
 
         updateApiSection(); loadHistory();
