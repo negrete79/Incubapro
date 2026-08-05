@@ -10,23 +10,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="IncubadoraPRO">
     
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="png192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="png512.png">
     <link rel="apple-touch-icon" href="png192.png">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     
-    <!-- ========================================================
-         APLICAÇÃO PRINCIPAL (Tudo que é do app original fica aqui dentro)
-         ======================================================== -->
     <div class="app">
         <header class="header">
             <div class="logo">
@@ -61,127 +53,72 @@
         </nav>
 
         <div class="content">
-            
-            <!-- Página: Painel -->
             <div id="dashboard" class="page active">
                 <div class="time" id="current-time">--:--:--</div>
-                
                 <div class="card">
-                    <div class="card-header">
-                        <span>Temperatura</span>
-                        <i class="fas fa-temperature-high"></i>
-                    </div>
+                    <div class="card-header"><span>Temperatura</span><i class="fas fa-temperature-high"></i></div>
                     <div class="temp-display">
-                        <div class="temp-value">
-                            <span id="temp-value">37.5</span>
-                            <span class="temp-unit">°C</span>
-                        </div>
-                        <div class="temp-bar">
-                            <div class="temp-fill" id="temp-fill"></div>
-                        </div>
+                        <div class="temp-value"><span id="temp-value">37.5</span><span class="temp-unit">°C</span></div>
+                        <div class="temp-bar"><div class="temp-fill" id="temp-fill"></div></div>
                         <small>Ideal: <span id="ideal-temp">37.5</span>°C</small>
                     </div>
                 </div>
-
                 <div class="card">
-                    <div class="card-header">
-                        <span>Umidade</span>
-                        <i class="fas fa-tint"></i>
-                    </div>
+                    <div class="card-header"><span>Umidade</span><i class="fas fa-tint"></i></div>
                     <div class="temp-display">
-                        <div class="temp-value">
-                            <span id="humidity-value">55</span>
-                            <span class="temp-unit">%</span>
-                        </div>
-                        <div class="temp-bar">
-                            <div class="temp-fill" id="humidity-fill"></div>
-                        </div>
+                        <div class="temp-value"><span id="humidity-value">55</span><span class="temp-unit">%</span></div>
+                        <div class="temp-bar"><div class="temp-fill" id="humidity-fill"></div></div>
                         <small>Ideal: 55%</small>
                     </div>
                 </div>
-
                 <div class="card">
-                    <div class="card-header">
-                        <span>Viragem</span>
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                    <div class="heartbeat">
-                        <i class="fas fa-heart heart-icon"></i>
-                        <span id="turn-status">Aguardando</span>
-                    </div>
-                    <div style="text-align: center; color: #666; font-size: 0.9rem;">
-                        Próxima: <span id="next-turn">--:--</span>
-                    </div>
+                    <div class="card-header"><span>Viragem</span><i class="fas fa-sync-alt"></i></div>
+                    <div class="heartbeat"><i class="fas fa-heart heart-icon"></i><span id="turn-status">Aguardando</span></div>
+                    <div class="turn-next-text">Próxima: <span id="next-turn">--:--</span></div>
                 </div>
-
                 <div class="card">
-                    <div class="card-header">
-                        <span>Status do Sistema</span>
-                        <i class="fas fa-heartbeat"></i>
-                    </div>
+                    <div class="card-header"><span>Status do Sistema</span><i class="fas fa-heartbeat"></i></div>
                     <div class="status-grid">
-                        <div class="status-item">
-                            <i class="fas fa-wifi"></i>
-                            <span>Conexão: <strong>OK</strong></span>
-                        </div>
-                        <div class="status-item">
-                            <i class="fas fa-battery-three-quarters"></i>
-                            <span>Energia: <strong>Estável</strong></span>
-                        </div>
+                        <div class="status-item"><i class="fas fa-wifi"></i><span>Conexão: <strong>OK</strong></span></div>
+                        <div class="status-item"><i class="fas fa-battery-three-quarters"></i><span>Energia: <strong>Estável</strong></span></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Página: Lotes -->
             <div id="batches" class="page">
-                <button class="btn" onclick="openBatchModal()">
-                    <i class="fas fa-plus"></i> Novo Lote
-                </button>
-                
+                <button class="btn" onclick="openBatchModal()"><i class="fas fa-plus"></i> Novo Lote</button>
                 <div id="batches-container">
-                    <div class="empty-state">
-                        <i class="fas fa-egg"></i>
-                        <p>Nenhum lote cadastrado</p>
-                    </div>
+                    <div class="empty-state"><i class="fas fa-egg"></i><p>Nenhum lote cadastrado</p></div>
                 </div>
             </div>
             
-            <!-- Página: Configurações -->
             <div id="settings" class="page">
                 <div class="card">
-                    <div class="card-header">
-                        <span>Notificações</span>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="temp-alerts" checked> Alertas de temperatura
+                    <div class="card-header"><span>Notificações</span></div>
+                    <div class="settings-toggles">
+                        <label class="toggle-label">
+                            <span>Alertas de temperatura</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="temp-alerts" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
                         </label>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="turn-reminders" checked> Lembretes de viragem
+                        <label class="toggle-label">
+                            <span>Lembretes de viragem</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="turn-reminders" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
                         </label>
                     </div>
                 </div>
-
-                <!-- Card do Assistente IA (Fica isolado aqui dentro de Config) -->
                 <div class="card">
-                    <div class="card-header">
-                        <span>Assistente IA</span>
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div id="chat-api-section">
-                        <!-- O javascript vai preencher isso dinamicamente -->
-                    </div>
+                    <div class="card-header"><span>Assistente IA</span><i class="fas fa-robot"></i></div>
+                    <div id="chat-api-section"></div>
                 </div>
-                
                 <div class="card">
-                    <div class="card-header">
-                        <span>Dados</span>
-                    </div>
-                    <button class="btn btn-danger" onclick="clearData()">
-                        <i class="fas fa-trash"></i> Limpar todos os dados
-                    </button>
+                    <div class="card-header"><span>Dados</span></div>
+                    <button class="btn btn-danger" onclick="clearData()"><i class="fas fa-trash"></i> Limpar todos os dados</button>
                 </div>
             </div>
         </div>
@@ -189,25 +126,15 @@
         <div class="footer">
             <p>Desenvolvido por Elias Costa Negret's</p>
             <div class="social-links">
-                <a href="https://instagram.com" target="_blank" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://youtube.com" target="_blank" title="YouTube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="https://telegram.org" target="_blank" title="Telegram">
-                    <i class="fab fa-telegram"></i>
-                </a>
+                <a href="https://instagram.com" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://youtube.com" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://telegram.org" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- ========================================================
-         MODAIS ORIGINAIS (Fora da div .app para ficar por cima de tudo)
-         ======================================================== -->
-    
-    <!-- Modal: Novo/Editar Lote -->
-    <div id="batch-modal" class="modal">
+    <!-- MODAIS DO APP -->
+    <div id="batch-modal" class="modal" onclick="if(event.target===this)closeModal()">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modal-title">Novo Lote</h3>
@@ -228,18 +155,9 @@
                         <option value="pheasant">🐓 Faisão</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Data de Início</label>
-                    <input type="date" id="start-date" required>
-                </div>
-                <div class="form-group">
-                    <label>Quantidade de Ovos</label>
-                    <input type="number" id="egg-count" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="notes" rows="2"></textarea>
-                </div>
+                <div class="form-group"><label>Data de Início</label><input type="date" id="start-date" required></div>
+                <div class="form-group"><label>Quantidade de Ovos</label><input type="number" id="egg-count" min="1" required></div>
+                <div class="form-group"><label>Observações</label><textarea id="notes" rows="2"></textarea></div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
                     <button type="submit" class="btn">Salvar</button>
@@ -248,8 +166,7 @@
         </div>
     </div>
     
-    <!-- Modal: Detalhes do Lote -->
-    <div id="details-modal" class="modal">
+    <div id="details-modal" class="modal" onclick="if(event.target===this)closeModal()">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Detalhes do Lote</h3>
@@ -262,18 +179,12 @@
         </div>
     </div>
 
-
-    <!-- ========================================================
-         ELEMENTOS DO CHAT GROQ (Totalmente fora da div .app)
-         ======================================================== -->
-
-    <!-- Botão Flutuante -->
+    <!-- ELEMENTOS DO CHAT -->
     <button class="chat-fab" id="chat-fab" onclick="toggleChatWindow()">
         <i class="fas fa-comment-dots"></i>
         <span class="chat-badge-dot" id="chat-badge"></span>
     </button>
 
-    <!-- Janela do Chat -->
     <div class="chat-window" id="chat-window">
         <div class="chat-header">
             <div class="chat-header-left">
@@ -293,11 +204,10 @@
         </div>
     </div>
 
-    <!-- Modal da Chave API -->
-    <div class="api-modal-overlay" id="api-modal">
+    <div class="api-modal-overlay" id="api-modal" onclick="if(event.target===this)closeApiModal()">
         <div class="api-modal-box">
             <h3><i class="fas fa-key"></i> Chave da API</h3>
-            <p>Insira sua chave da API do Groq para ativar o assistente. A chave fica armazenada apenas no seu dispositivo.</p>
+            <p>Insira sua chave da API do Groq para ativar o assistente.</p>
             <input type="password" id="api-key-input" placeholder="gsk_xxxxxxxxxxxxxxxx" autocomplete="off">
             <div class="api-modal-actions">
                 <button class="api-cancel-btn" onclick="closeApiModal()">Cancelar</button>
@@ -306,185 +216,68 @@
         </div>
     </div>
     
-    <!-- ========================================================
-         JAVASCRIPTS
-         ======================================================== -->
-    
-    <!-- App Principal (Lotes, Painel, Alarme) -->
     <script src="app.js"></script>
-
-    <!-- Chat Groq (IIFE isolada, não mexe no app.js) -->
     <script>
-    (function() {
-        var chatOpen = false;
-        var chatHistory = [];
-        var isGenerating = false;
-        var STORAGE_KEY = 'incubadora_groq_api_key';
-        var CHAT_HISTORY_KEY = 'incubadora_chat_history';
+    (function(){
+        var chatOpen=false, chatHistory=[], isGenerating=false, STORAGE_KEY='incubadora_groq_api_key';
+        var chatWindow=document.getElementById('chat-window'), chatMessages=document.getElementById('chat-messages');
+        var chatInput=document.getElementById('chat-input'), chatSendBtn=document.getElementById('chat-send-btn');
+        var chatBadge=document.getElementById('chat-badge'), apiModal=document.getElementById('api-modal');
+        var apiKeyInput=document.getElementById('api-key-input'), chatApiSection=document.getElementById('chat-api-section');
 
-        var chatWindow = document.getElementById('chat-window');
-        var chatMessages = document.getElementById('chat-messages');
-        var chatInput = document.getElementById('chat-input');
-        var chatSendBtn = document.getElementById('chat-send-btn');
-        var chatBadge = document.getElementById('chat-badge');
-        var apiModal = document.getElementById('api-modal');
-        var apiKeyInput = document.getElementById('api-key-input');
-        var chatApiSection = document.getElementById('chat-api-section');
+        chatInput.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMessage();} });
+        document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ if(apiModal.classList.contains('open'))closeApiModal(); else if(chatOpen)toggleChatWindow(); }});
 
-        // Evento de tecla Enter para enviar
-        chatInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendChatMessage();
-            }
-        });
-
-        // Fechar modal de API clicando no fundo escuro
-        apiModal.addEventListener('click', function(e) {
-            if (e.target === apiModal) closeApiModal();
-        });
-
-        // Fechar com a tecla Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                if (apiModal.classList.contains('open')) closeApiModal();
-                else if (chatOpen) toggleChatWindow();
-            }
-        });
-
-        function getApiKey() {
-            try { return localStorage.getItem(STORAGE_KEY) || ''; }
-            catch(e) { return ''; }
+        function getApiKey(){ try{return localStorage.getItem(STORAGE_KEY)||'';}catch(e){return '';} }
+        function updateApiSection(){
+            if(getApiKey()) chatApiSection.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:#2e7d32;font-size:1rem;"><i class="fas fa-check-circle"></i><span>Assistente configurado e ativo</span></div>';
+            else chatApiSection.innerHTML='<button class="chat-api-trigger" onclick="openApiModal()"><i class="fas fa-key"></i> Configurar Chave API</button>';
         }
 
-        // Atualiza o card de configurações (mostra botão ou "Ativo")
-        function updateApiSection() {
-            if (getApiKey()) {
-                chatApiSection.innerHTML = '<div style="display:flex;align-items:center;gap:10px;color:#2e7d32;font-size:1rem;"><i class="fas fa-check-circle" style="font-size:1.2rem;"></i><span>Assistente configurado e ativo</span></div>';
-            } else {
-                chatApiSection.innerHTML = '<button class="chat-api-trigger" onclick="openApiModal()"><i class="fas fa-key"></i> Configurar Chave API</button>';
-            }
-        }
-
-        // Controles do Modal da API Key
-        window.openApiModal = function() {
-            apiModal.classList.add('open');
-            setTimeout(function() { apiKeyInput.focus(); }, 100);
+        window.openApiModal=function(){ apiModal.classList.add('open'); setTimeout(function(){apiKeyInput.focus();},100); };
+        window.closeApiModal=function(){ apiModal.classList.remove('open'); apiKeyInput.value=''; };
+        window.saveApiKey=function(){
+            var key=apiKeyInput.value.trim(); if(!key){apiKeyInput.focus();return;}
+            try{localStorage.setItem(STORAGE_KEY,key);}catch(e){} apiKeyInput.value=''; closeApiModal(); updateApiSection(); chatBadge.style.display='none';
+            addSystemMessage('Chave salva! Especialista em avicultura ativado.');
         };
 
-        window.closeApiModal = function() {
-            apiModal.classList.remove('open');
-            apiKeyInput.value = '';
-            apiKeyInput.style.borderColor = '#e0e0e0';
+        window.toggleChatWindow=function(){
+            chatOpen=!chatOpen;
+            if(chatOpen){chatWindow.classList.add('open');chatBadge.style.display='none';setTimeout(function(){chatInput.focus();},200);scrollBottom();}
+            else{chatWindow.classList.remove('open');}
         };
 
-        window.saveApiKey = function() {
-            var key = apiKeyInput.value.trim();
-            if (!key) {
-                apiKeyInput.style.borderColor = '#ef4444';
-                apiKeyInput.focus();
-                setTimeout(function() { apiKeyInput.style.borderColor = '#e0e0e0'; }, 1500);
-                return;
-            }
-            try { localStorage.setItem(STORAGE_KEY, key); } catch(e) {}
-            apiKeyInput.value = '';
-            closeApiModal();
-            updateApiSection();
-            chatBadge.style.display = 'none';
-            addSystemMessage('Chave configurada! O especialista em avicultura está pronto.');
+        function loadHistory(){try{var d=localStorage.getItem('incubadora_chat_history');if(d)chatHistory=JSON.parse(d);}catch(e){chatHistory=[];}}
+        function persistHistory(){try{localStorage.setItem('incubadora_chat_history',JSON.stringify(chatHistory.slice(-50)));}catch(e){}}
+        function renderHistory(){chatMessages.innerHTML='';for(var i=0;i<chatHistory.length;i++){var m=chatHistory[i];if(m.role==='system')addSystemMessage(m.content,false);else appendBubble(m.role,m.content,false);}scrollBottom();}
+        function addSystemMessage(text,persist){if(persist!==false){chatHistory.push({role:'system',content:text});persistHistory();}var el=document.createElement('div');el.className='chat-msg chat-msg-system';el.textContent=text;chatMessages.appendChild(el);scrollBottom();}
+        function appendBubble(role,content,persist){if(persist!==false){chatHistory.push({role:role,content:content});persistHistory();}var el=document.createElement('div');el.className='chat-msg chat-msg-'+role;el.innerHTML=content.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');chatMessages.appendChild(el);scrollBottom();}
+        function showTyping(){var el=document.createElement('div');el.className='chat-typing';el.id='typing-ind';el.innerHTML='<span></span><span></span><span></span>';chatMessages.appendChild(el);scrollBottom();}
+        function hideTyping(){var el=document.getElementById('typing-ind');if(el)el.remove();}
+        function scrollBottom(){requestAnimationFrame(function(){chatMessages.scrollTop=chatMessages.scrollHeight;});}
+
+        window.sendChatMessage=async function(){
+            var text=chatInput.value.trim(); if(!text||isGenerating)return;
+            var apiKey=getApiKey(); if(!apiKey){addSystemMessage('Configure a chave API em Config > Assistente IA.');return;}
+            appendBubble('user',text); chatInput.value=''; isGenerating=true; chatSendBtn.disabled=true; showTyping();
+            try{
+                var msgs=[{role:'system',content:'Você é um Especialista Sênior em Avicultura. Responda APENAS sobre aves (incubação, criação, alimentação, doenças). Se perguntarem outra coisa, diga: "Desculpe, sou especialista apenas em avicultura". Responda em PT-BR. Use **negrito** para destacar.'}];
+                var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
+                for(var i=0;i<recent.length;i++)msgs.push(recent[i]);
+                var resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
+                hideTyping();
+                if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
+                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content));}
+            }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
+            isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
         };
 
-        // Controles da Janela do Chat
-        window.toggleChatWindow = function() {
-            chatOpen = !chatOpen;
-            if (chatOpen) {
-                chatWindow.classList.add('open');
-                chatBadge.style.display = 'none';
-                setTimeout(function() { chatInput.focus(); }, 200);
-                scrollBottom();
-            } else {
-                chatWindow.classList.remove('open');
-            }
-        };
-
-        // Histórico do Chat
-        function loadHistory() {
-            try {
-                var d = localStorage.getItem(CHAT_HISTORY_KEY);
-                if (d) chatHistory = JSON.parse(d);
-            } catch(e) { chatHistory = []; }
-        }
-
-        function persistHistory() {
-            try {
-                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory.slice(-50)));
-            } catch(e) {}
-        }
-
-        function renderHistory() {
-            chatMessages.innerHTML = '';
-            for (var i = 0; i < chatHistory.length; i++) {
-                var m = chatHistory[i];
-                if (m.role === 'system') addSystemMessage(m.content, false);
-                else appendBubble(m.role, m.content, false);
-            }
-            scrollBottom();
-        }
-
-        // Renderização das Mensagens
-        function addSystemMessage(text, persist) {
-            if (persist !== false) { chatHistory.push({ role: 'system', content: text }); persistHistory(); }
-            var el = document.createElement('div');
-            el.className = 'chat-msg chat-msg-system';
-            el.textContent = text;
-            chatMessages.appendChild(el);
-            scrollBottom();
-        }
-
-        function appendBubble(role, content, persist) {
-            if (persist !== false) { chatHistory.push({ role: role, content: content }); persistHistory(); }
-            var el = document.createElement('div');
-            el.className = 'chat-msg chat-msg-' + role;
-            el.innerHTML = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-            chatMessages.appendChild(el);
-            scrollBottom();
-        }
-
-        function showTyping() {
-            var el = document.createElement('div');
-            el.className = 'chat-typing';
-            el.id = 'typing-ind';
-            el.innerHTML = '<span></span><span></span><span></span>';
-            chatMessages.appendChild(el);
-            scrollBottom();
-        }
-
-        function hideTyping() {
-            var el = document.getElementById('typing-ind');
-            if (el) el.remove();
-        }
-
-        function scrollBottom() {
-            requestAnimationFrame(function() { chatMessages.scrollTop = chatMessages.scrollHeight; });
-        }
-
-        // Envio de Mensagem para a API do Groq
-        window.sendChatMessage = async function() {
-            var text = chatInput.value.trim();
-            if (!text || isGenerating) return;
-
-            var apiKey = getApiKey();
-            if (!apiKey) {
-                addSystemMessage('Nenhuma chave API configurada. Vá em Config > Assistente IA.');
-                return;
-            }
-
-            appendBubble('user', text);
-            chatInput.value = '';
-            isGenerating = true;
-            chatSendBtn.disabled = true;
-            showTyping();
-
-            try {
-                var msgs = [{ role: 'system', content: buildPrompt() }];
-                var recent = chatHistory.filter(function(m) { return m.role === 'user' || m.role === 'assistant'; }).s
+        updateApiSection(); loadHistory();
+        if(!getApiKey()){chatBadge.style.display='block';addSystemMessage('Configure a chave API nas Configurações.');}
+        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o especialista em avicultura. Pergunte-me sobre aves!');}
+        renderHistory();
+    })();
+    </script>
+</body>
+    </html>
