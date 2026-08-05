@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Botão limpar conversa */
         .chat-clear-btn {
             background: none;
             border: none;
@@ -127,7 +126,7 @@
             <div class="modal-header"><h3 id="modal-title">Novo Lote</h3><button class="close-btn" onclick="closeModal()">&times;</button></div>
             <form id="batch-form" onsubmit="saveBatch(event)">
                 <input type="hidden" id="batch-id">
-                <div class="form-group"><label>Tipo de Ave</label><select id="bird-type" required><option value="">Selecione...</option><option value="chicken">🐔 Galinha</option><option value="duck">🦆 Pato</option><option value="quail">🐦 Codorna</option><option value="goose">🪿 Ganso</option><option value="swan">🦢 Cisne</option><option value="peacock">🦚 Pavão</option><option value="pheasant">🐓 Faisão</option></select></div>
+                <div class="form-group"><label>Tipo de Ave</label><select id="bird-type" required><option value="">Selecione...</option><option value="chicken">🐔 Galinha</option><option value="duck">🦆 Pato</option><option value="quail">🐦 Codorna</option><option value="goose">🪿 Ganso</option><option value="swan">🦢 Cisne</option><option value="peacock">🦚 Pavão</option><option value="pheasant">🐓 Faisão</option><option value="cockatiel">🦜 Calopsita</option></select></div>
                 <div class="form-group"><label>Data de Início</label><input type="date" id="start-date" required></div>
                 <div class="form-group"><label>Quantidade de Ovos</label><input type="number" id="egg-count" min="1" required></div>
                 <div class="form-group"><label>Observações</label><textarea id="notes" rows="2"></textarea></div>
@@ -156,7 +155,6 @@
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
-            <!-- REMOVIDO O ONCLICK AQUI PARA EVITAR DUPLICIDADE COM O APP.JS -->
             <input type="text" id="chat-input" placeholder="Digite sua dúvida..." autocomplete="off">
             <button class="chat-send-btn" id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
         </div>
@@ -183,7 +181,6 @@
         var chatBadge=document.getElementById('chat-badge'), apiModal=document.getElementById('api-modal');
         var apiKeyInput=document.getElementById('api-key-input'), chatApiSection=document.getElementById('chat-api-section');
 
-        // Eventos controlados apenas aqui, sem depender do onclick do HTML
         chatSendBtn.addEventListener('click', sendChatMessage);
         chatInput.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMessage();} });
         document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ if(apiModal.classList.contains('open'))closeApiModal(); else if(chatOpen)toggleChatWindow(); }});
@@ -217,7 +214,6 @@
             playChatGPTSend();
         };
 
-        /* ===== SOM ESTILO CHATGPT ===== */
         function playChatGPTSend() {
             try {
                 var ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -249,7 +245,6 @@
                 osc2.start(now + 0.08); osc2.stop(now + 0.15);
             } catch(e) {}
         }
-        /* ============================= */
 
         function loadHistory(){try{var d=localStorage.getItem('incubadora_chat_history');if(d)chatHistory=JSON.parse(d);}catch(e){chatHistory=[];}}
         function persistHistory(){try{localStorage.setItem('incubadora_chat_history',JSON.stringify(chatHistory.slice(-50)));}catch(e){}}
@@ -294,7 +289,7 @@
             try {
                 var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
                 if (b.length > 0) {
-                    var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão' };
+                    var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão', cockatiel:'Calopsita' };
                     batchesInfo = '';
                     for(var i=0; i<b.length; i++) {
                         var x = b[i];
@@ -314,14 +309,4 @@
                 '- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\n' +
                 'REGRAS:\n' +
                 '- Responda sobre qualquer assunto, mas foco em avicultura.\n' +
-                '- Se perguntarem sobre o app, use os dados reais acima para responder (ex: diga quantos ovos e de qual ave).';
-        }
-
-        updateApiSection(); loadHistory();
-        if(!getApiKey()){chatBadge.style.display='block';addSystemMessage('Configure a chave API nas Configurações.');}
-        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Pergunte-me sobre seu sistema ou avicultura!');}
-        renderHistory();
-    })();
-    </script>
-</body>
-</html>
+                '- Se perguntarem sobre o app, use os dados reais
