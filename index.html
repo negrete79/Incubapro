@@ -189,7 +189,7 @@
         function hideTyping(){var el=document.getElementById('typing-ind');if(el)el.remove();}
         function scrollBottom(){requestAnimationFrame(function(){chatMessages.scrollTop=chatMessages.scrollHeight;});}
 
-        // Som estilo "pop" do ChatGPT (suave, não bip agudo)
+        // Som "pop" suave estilo ChatGPT
         function playPopSound() {
             try {
                 var ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -197,14 +197,11 @@
                 var gain = ctx.createGain();
                 osc.connect(gain); 
                 gain.connect(ctx.destination);
-                
-                // Curva de frequência que desce suavemente (pop)
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
                 gain.gain.setValueAtTime(0.15, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-                
                 osc.start(ctx.currentTime); 
                 osc.stop(ctx.currentTime + 0.12);
             } catch(e) {}
@@ -219,17 +216,49 @@
             isGenerating=true; 
             chatSendBtn.disabled=true; 
             showTyping();
-            playPopSound(); // Som suave ao enviar
+            playPopSound();
 
             try{
                 var msgs=[{role:'system', content: buildPrompt()}];
                 var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
                 for(var i=0;i<recent.length;i++)msgs.push(recent[i]);
-                var resp=await fetch('https://api.groq.openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
+                
+                var resp=await fetch('https://api.groq.openai/v1/chat/completions',{
+                    method:'POST',
+                    headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'}, 
+                    body:JSON.stringify({model:'llama-3.1-8b-instant-preview',messages:msgs,max_tokens:1024,temperature:0.7})
+                });
+                
                 hideTyping();
-                if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
-                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playPopSound();} // Som suave ao receber
-            }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
+                
+                if(!resp.ok){
+                    var errorMsg = 'Erro de conexão com o servidor.';
+                    try {
+                        var errData = await resp.json().catch(function(){ return {}; });
+                        if(resp.status === 401) errorMsg = 'Chave da API inválida.';
+                        else if(resp.status === 429) errorMsg = 'Muitas requisições. Aguarde um momento e tente novamente.';
+                        else if(resp.status === 503) errorMsg = 'Servidor lotado. Tente novamente em alguns segundos.';
+                        else errorMsg = 'Erro ' + resp.status + ': ' + ((errData.error && errData.message) || 'Tente novamente.');
+                    } catch(e) {}
+                    addSystemMessage(errorMsg);
+                } else {
+                    var data=await resp.json();
+                    if(data.choices && data.choices && data.choices[0] && data.choices[0].message) {
+                        appendBubble('assistant', data.choices[0].message.content);
+                        playPopSound();
+                    } else {
+                        addSystemMessage('Resposta vazia da API. Tente novamente.');
+                    }
+                }
+            }catch(err){
+                hideTyping();
+                // Verifica se é erro de rede (offline)
+                if(err.message.includes('Failed to fetch') || err.name === 'TypeError') {
+                    addSystemMessage('Sem conexão com a internet. Verifique e tente novamente.');
+                } else {
+                    addSystemMessage('Erro de conexão. Tente novamente.');
+                }
+            }
             
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
         };
@@ -249,7 +278,7 @@
                     for(var i=0; i<b.length; i++) {
                         var x = b[i];
                         var nome = names[x.birdType] || x.birdType;
-                        var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24));
+                        var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24);
                         batchesInfo += '- Lote #' + x.id + ': ' + nome + ', ' + x.eggCount + ' ovos, iniciado há ' + dias + ' dias.\n';
                     }
                 }
