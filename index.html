@@ -189,21 +189,14 @@
         function hideTyping(){var el=document.getElementById('typing-ind');if(el)el.remove();}
         function scrollBottom(){requestAnimationFrame(function(){chatMessages.scrollTop=chatMessages.scrollHeight;});}
 
-        // Som "pop" suave estilo ChatGPT
-        function playPopSound() {
+        // Função do barulhinho
+        function playBeep(freq, dur) {
             try {
                 var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                var osc = ctx.createOscillator(); 
-                var gain = ctx.createGain();
-                osc.connect(gain); 
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
-                gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-                osc.start(ctx.currentTime); 
-                osc.stop(ctx.currentTime + 0.12);
+                var osc = ctx.createOscillator(); var gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.frequency.value = freq; osc.type = 'sine'; gain.gain.value = 0.4;
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + dur);
             } catch(e) {}
         }
 
@@ -216,47 +209,17 @@
             isGenerating=true; 
             chatSendBtn.disabled=true; 
             showTyping();
-            playPopSound();
+            playBeep(1200, 0.08); // Barulho ao enviar
 
             try{
                 var msgs=[{role:'system', content: buildPrompt()}];
                 var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
                 for(var i=0;i<recent.length;i++)msgs.push(recent[i]);
-                
-                var resp=await fetch('https://api.groq.openai/v1/chat/completions',{
-                    method:'POST',
-                    headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'}, 
-                    body:JSON.stringify({model:'llama-3.1-8b-instant-preview',messages:msgs,max_tokens:1024,temperature:0.7})
-                });
-                
+                var resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
                 hideTyping();
-                
-                if(!resp.ok){
-                    var errorMsg = 'Erro de conexão. Tente novamente.';
-                    try {
-                        var errData = await resp.json().catch(function(){ return {}; });
-                        if(resp.status === 401) errorMsg = 'Chave inválida.';
-                        else if(resp.status === 429) errorMsg = 'Muitas requisições. Aguarde um momento e tente novamente.';
-                        else errorMsg = 'Erro ' + resp.status + ': ' + ((errData.error && errData.message) || 'Tente novamente.');
-                    } catch(e) {}
-                    addSystemMessage(errorMsg);
-                } else {
-                    var data=await resp.json();
-                    if(data.choices && data.choices && data.choices[0] && data.choices[0].message) {
-                        appendBubble('assistant', data.choices[0].message.content);
-                        playPopSound();
-                    } else {
-                        addSystemMessage('Resposta vazia da API.');
-                    }
-                }
-            }catch(err){
-                hideTyping();
-                if(err.message.includes('Failed to fetch') || err.name === 'TypeError') {
-                    addSystemMessage('Sem conexão com a internet. Verifique e tente novamente.');
-                } else {
-                    addSystemMessage('Erro de conexão. Tente novamente.');
-                }
-            }
+                if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
+                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playBeep(800, 0.1);} // Barulho ao receber
+            }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
             
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
         };
