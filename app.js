@@ -349,10 +349,17 @@ function deleteBatch(id) {
     }
 }
 
-// Limpar dados
+// Limpar dados (preserva chave e histórico do chat)
 function clearData() {
     if (confirm('Tem certeza que deseja limpar todos os dados?')) {
+        var apiKey = localStorage.getItem('incubadora_groq_api_key');
+        var chatHist = localStorage.getItem('incubadora_chat_history');
+        
         localStorage.clear();
+        
+        if (apiKey) localStorage.setItem('incubadora_groq_api_key', apiKey);
+        if (chatHist) localStorage.setItem('incubadora_chat_history', chatHist);
+        
         batches = [];
         renderBatches();
         showNotification('✅ Sucesso', 'Dados limpos com sucesso!');
@@ -376,8 +383,11 @@ function showNotification(title, message) {
     }, 3000);
 }
 
-// Fechar modal ao clicar fora
+// Fechar modal ao clicar fora (ignora elementos do chat)
 window.onclick = function(event) {
+    if (event.target.closest('.chat-window') || event.target.closest('.api-modal-overlay') || event.target.closest('.chat-fab')) {
+        return;
+    }
     if (event.target.classList.contains('modal')) {
         closeModal();
     }
