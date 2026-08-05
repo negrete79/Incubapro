@@ -21,290 +21,6 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- Estilos do ChatGrod e Modal API (isolados, não tocam no existente) -->
-    <style>
-        /* ===== Botão Chat Flutuante ===== */
-        .chat-fab {
-            position: fixed;
-            bottom: 100px;
-            right: 18px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #1565C0, #0D47A1);
-            color: #fff;
-            border: none;
-            box-shadow: 0 4px 18px rgba(21,101,192,0.45);
-            cursor: pointer;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            transition: transform .2s, box-shadow .2s;
-        }
-        .chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(21,101,192,0.6); }
-        .chat-fab .badge-dot {
-            position: absolute;
-            top: 2px; right: 2px;
-            width: 12px; height: 12px;
-            background: #ef4444;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            display: none;
-        }
-
-        /* ===== Janela do Chat ===== */
-        .chat-window {
-            position: fixed;
-            bottom: 166px;
-            right: 18px;
-            width: 340px;
-            max-width: calc(100vw - 36px);
-            height: 460px;
-            max-height: calc(100vh - 220px);
-            background: #1a1a2e;
-            border-radius: 18px;
-            box-shadow: 0 12px 48px rgba(0,0,0,0.5);
-            z-index: 10000;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-            animation: chatSlideUp .25s ease;
-        }
-        @keyframes chatSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .chat-window.open { display: flex; }
-
-        .chat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            background: linear-gradient(135deg, #1565C0, #0D47A1);
-            color: #fff;
-        }
-        .chat-header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chat-header-left i { font-size: 1.2rem; }
-        .chat-header-left span { font-weight: 700; font-size: 0.95rem; }
-        .chat-close-btn {
-            background: none; border: none; color: #fff; font-size: 1.3rem;
-            cursor: pointer; opacity: .8; transition: opacity .2s;
-        }
-        .chat-close-btn:hover { opacity: 1; }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.15) transparent;
-        }
-        .chat-messages::-webkit-scrollbar { width: 5px; }
-        .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-
-        .chat-msg {
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 16px;
-            font-size: 0.88rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-            animation: msgFade .2s ease;
-        }
-        @keyframes msgFade {
-            from { opacity: 0; transform: translateY(6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .chat-msg.user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #1565C0, #1976D2);
-            color: #fff;
-            border-bottom-right-radius: 4px;
-        }
-        .chat-msg.assistant {
-            align-self: flex-start;
-            background: #2a2a4a;
-            color: #e0e0e0;
-            border-bottom-left-radius: 4px;
-        }
-        .chat-msg.system {
-            align-self: center;
-            background: transparent;
-            color: #888;
-            font-size: 0.78rem;
-            text-align: center;
-            padding: 4px 0;
-        }
-
-        .chat-typing {
-            align-self: flex-start;
-            display: flex;
-            gap: 5px;
-            padding: 12px 18px;
-            background: #2a2a4a;
-            border-radius: 16px;
-            border-bottom-left-radius: 4px;
-        }
-        .chat-typing span {
-            width: 7px; height: 7px;
-            background: #888;
-            border-radius: 50%;
-            animation: typingBounce .6s infinite alternate;
-        }
-        .chat-typing span:nth-child(2) { animation-delay: .15s; }
-        .chat-typing span:nth-child(3) { animation-delay: .3s; }
-        @keyframes typingBounce {
-            to { transform: translateY(-6px); opacity: .4; }
-        }
-
-        .chat-input-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 14px;
-            background: #16162a;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-        .chat-input-area input {
-            flex: 1;
-            background: #2a2a4a;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
-            padding: 10px 16px;
-            color: #fff;
-            font-size: 0.88rem;
-            outline: none;
-            transition: border-color .2s;
-        }
-        .chat-input-area input::placeholder { color: #666; }
-        .chat-input-area input:focus { border-color: #1565C0; }
-        .chat-send-btn {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #1565C0, #0D47A1);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.95rem;
-            transition: transform .15s, opacity .15s;
-        }
-        .chat-send-btn:hover { transform: scale(1.08); }
-        .chat-send-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-        /* ===== Modal API Key ===== */
-        .api-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 20000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn .2s ease;
-        }
-        .api-modal-overlay.open { display: flex; }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-        .api-modal-box {
-            background: #fff;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 400px;
-            padding: 28px 24px 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            animation: modalPop .25s ease;
-        }
-        @keyframes modalPop {
-            from { opacity: 0; transform: scale(0.92); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-        .api-modal-box h3 {
-            margin: 0 0 6px;
-            font-size: 1.15rem;
-            color: #1a1a2e;
-        }
-        .api-modal-box p {
-            margin: 0 0 18px;
-            font-size: 0.82rem;
-            color: #888;
-            line-height: 1.5;
-        }
-        .api-modal-box input {
-            width: 100%;
-            padding: 11px 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color .2s;
-            box-sizing: border-box;
-        }
-        .api-modal-box input:focus { border-color: #1565C0; }
-        .api-modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 18px;
-            justify-content: flex-end;
-        }
-        .api-modal-actions button {
-            padding: 10px 22px;
-            border-radius: 10px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: transform .12s, box-shadow .12s;
-        }
-        .api-modal-actions button:active { transform: scale(0.96); }
-        .api-modal-actions .api-cancel-btn {
-            background: #f0f0f0;
-            color: #555;
-        }
-        .api-modal-actions .api-save-btn {
-            background: linear-gradient(135deg, #1565C0, #0D47A1);
-            color: #fff;
-            box-shadow: 0 3px 12px rgba(21,101,192,0.35);
-        }
-
-        /* Botão "Chat IA" nas configurações - aparece só se não tiver chave */
-        .chat-api-trigger {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #1565C0, #1976D2);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.92rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform .12s, box-shadow .12s;
-        }
-        .chat-api-trigger:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(21,101,192,0.4);
-        }
-        .chat-api-trigger:active { transform: scale(0.97); }
-    </style>
 </head>
 <body>
     <div class="app">
@@ -443,15 +159,13 @@
                     </div>
                 </div>
 
-                <!-- NOVO: Card do Chat IA nas Configurações -->
-                <div class="card" id="chat-settings-card">
+                <!-- Card do Assistente IA -->
+                <div class="card">
                     <div class="card-header">
                         <span>Assistente IA</span>
                         <i class="fas fa-robot"></i>
                     </div>
-                    <div id="chat-api-section">
-                        <!-- Conteúdo dinâmico: botão "Configurar API" ou status "Ativo" -->
-                    </div>
+                    <div id="chat-api-section"></div>
                 </div>
                 
                 <div class="card">
@@ -530,14 +244,333 @@
                 <h3>Detalhes do Lote</h3>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <div id="batch-details-content">
-                <!-- Conteúdo dinâmico -->
-            </div>
+            <div id="batch-details-content"></div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button>
             </div>
         </div>
     </div>
 
-    <!-- NOVO: Botão flutuante do Chat -->
-    <bu
+    <!-- Botão flutuante do Chat -->
+    <button class="chat-fab" id="chat-fab" onclick="toggleChatWindow()">
+        <i class="fas fa-comment-dots"></i>
+        <span class="chat-badge-dot" id="chat-badge"></span>
+    </button>
+
+    <!-- Janela do Chat -->
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <i class="fas fa-robot"></i>
+                <span>Assistente IA</span>
+            </div>
+            <button class="chat-close-btn" onclick="toggleChatWindow()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Digite sua dúvida..." autocomplete="off">
+            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal da Chave API -->
+    <div class="api-modal-overlay" id="api-modal">
+        <div class="api-modal-box">
+            <h3><i class="fas fa-key"></i> Chave da API</h3>
+            <p>Insira sua chave da API do Groq para ativar o assistente. A chave fica armazenada apenas no seu dispositivo.</p>
+            <input type="password" id="api-key-input" placeholder="gsk_xxxxxxxxxxxxxxxx" autocomplete="off">
+            <div class="api-modal-actions">
+                <button class="api-cancel-btn" onclick="closeApiModal()">Cancelar</button>
+                <button class="api-save-btn" onclick="saveApiKey()">Salvar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript principal -->
+    <script src="app.js"></script>
+
+    <!-- Script do Chat (isolado, carrega depois do app.js) -->
+    <script>
+    (function() {
+        let chatOpen = false;
+        let chatHistory = [];
+        let isGenerating = false;
+        const STORAGE_KEY = 'incubadora_groq_api_key';
+        const CHAT_HISTORY_KEY = 'incubadora_chat_history';
+
+        const fab = document.getElementById('chat-fab');
+        const chatWindow = document.getElementById('chat-window');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        const chatBadge = document.getElementById('chat-badge');
+        const apiModal = document.getElementById('api-modal');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const chatApiSection = document.getElementById('chat-api-section');
+
+        /* Enter para enviar */
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        /* Fechar modal API ao clicar fora */
+        apiModal.addEventListener('click', function(e) {
+            if (e.target === apiModal) closeApiModal();
+        });
+
+        /* Escape fecha */
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (apiModal.classList.contains('open')) closeApiModal();
+                else if (chatOpen) toggleChatWindow();
+            }
+        });
+
+        function getApiKey() {
+            try { return localStorage.getItem(STORAGE_KEY) || ''; }
+            catch(e) { return ''; }
+        }
+
+        function updateApiSection() {
+            if (getApiKey()) {
+                chatApiSection.innerHTML =
+                    '<div style="display:flex;align-items:center;gap:8px;color:#2e7d32;font-size:0.9rem;">' +
+                    '<i class="fas fa-check-circle"></i>' +
+                    '<span>Assistente configurado e ativo</span></div>';
+            } else {
+                chatApiSection.innerHTML =
+                    '<button class="chat-api-trigger" onclick="openApiModal()">' +
+                    '<i class="fas fa-key"></i> Configurar Chave API</button>';
+            }
+        }
+
+        window.openApiModal = function() {
+            apiModal.classList.add('open');
+            setTimeout(function() { apiKeyInput.focus(); }, 100);
+        };
+
+        window.closeApiModal = function() {
+            apiModal.classList.remove('open');
+            apiKeyInput.value = '';
+            apiKeyInput.style.borderColor = '#e0e0e0';
+        };
+
+        window.saveApiKey = function() {
+            var key = apiKeyInput.value.trim();
+            if (!key) {
+                apiKeyInput.style.borderColor = '#ef4444';
+                apiKeyInput.focus();
+                setTimeout(function() { apiKeyInput.style.borderColor = '#e0e0e0'; }, 1500);
+                return;
+            }
+            try { localStorage.setItem(STORAGE_KEY, key); } catch(e) {}
+            apiKeyInput.value = '';
+            closeApiModal();
+            updateApiSection();
+            chatBadge.style.display = 'none';
+            addSystemMessage('Chave configurada com sucesso! O assistente está pronto.');
+        };
+
+        window.toggleChatWindow = function() {
+            chatOpen = !chatOpen;
+            if (chatOpen) {
+                chatWindow.classList.add('open');
+                chatBadge.style.display = 'none';
+                setTimeout(function() { chatInput.focus(); }, 150);
+                scrollBottom();
+            } else {
+                chatWindow.classList.remove('open');
+            }
+        };
+
+        function loadHistory() {
+            try {
+                var d = localStorage.getItem(CHAT_HISTORY_KEY);
+                if (d) chatHistory = JSON.parse(d);
+            } catch(e) { chatHistory = []; }
+        }
+
+        function persistHistory() {
+            try {
+                var trimmed = chatHistory.slice(-50);
+                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(trimmed));
+            } catch(e) {}
+        }
+
+        function renderHistory() {
+            chatMessages.innerHTML = '';
+            for (var i = 0; i < chatHistory.length; i++) {
+                var m = chatHistory[i];
+                if (m.role === 'system') addSystemMessage(m.content, false);
+                else appendBubble(m.role, m.content, false);
+            }
+            scrollBottom();
+        }
+
+        function addSystemMessage(text, persist) {
+            if (persist !== false) {
+                chatHistory.push({ role: 'system', content: text });
+                persistHistory();
+            }
+            var el = document.createElement('div');
+            el.className = 'chat-msg chat-msg-system';
+            el.textContent = text;
+            chatMessages.appendChild(el);
+            scrollBottom();
+        }
+
+        function appendBubble(role, content, persist) {
+            if (persist !== false) {
+                chatHistory.push({ role: role, content: content });
+                persistHistory();
+            }
+            var el = document.createElement('div');
+            el.className = 'chat-msg chat-msg-' + role;
+            var formatted = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            el.innerHTML = formatted;
+            chatMessages.appendChild(el);
+            scrollBottom();
+        }
+
+        function showTyping() {
+            var el = document.createElement('div');
+            el.className = 'chat-typing';
+            el.id = 'typing-ind';
+            el.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(el);
+            scrollBottom();
+        }
+
+        function hideTyping() {
+            var el = document.getElementById('typing-ind');
+            if (el) el.remove();
+        }
+
+        function scrollBottom() {
+            requestAnimationFrame(function() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        window.sendChatMessage = async function() {
+            var text = chatInput.value.trim();
+            if (!text || isGenerating) return;
+
+            var apiKey = getApiKey();
+            if (!apiKey) {
+                addSystemMessage('Nenhuma chave API configurada. Vá em Config > Assistente IA.');
+                return;
+            }
+
+            appendBubble('user', text);
+            chatInput.value = '';
+            isGenerating = true;
+            chatSendBtn.disabled = true;
+            showTyping();
+
+            try {
+                var systemPrompt = buildPrompt();
+                var msgs = [{ role: 'system', content: systemPrompt }];
+                var recent = chatHistory.filter(function(m) {
+                    return m.role === 'user' || m.role === 'assistant';
+                }).slice(-20);
+                for (var i = 0; i < recent.length; i++) msgs.push(recent[i]);
+
+                var resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'llama-3.3-70b-versatile',
+                        messages: msgs,
+                        max_tokens: 1024,
+                        temperature: 0.7
+                    })
+                });
+
+                hideTyping();
+
+                if (!resp.ok) {
+                    var errData = await resp.json().catch(function() { return {}; });
+                    var errMsg = (errData.error && errData.error.message) || 'Erro desconhecido';
+                    if (resp.status === 401) {
+                        addSystemMessage('Chave API inválida. Verifique nas Configurações.');
+                    } else {
+                        addSystemMessage('Erro da API: ' + errMsg);
+                    }
+                } else {
+                    var data = await resp.json();
+                    var reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || 'Sem resposta.';
+                    appendBubble('assistant', reply);
+                }
+            } catch(err) {
+                hideTyping();
+                addSystemMessage('Erro de conexão. Verifique sua internet.');
+            }
+
+            isGenerating = false;
+            chatSendBtn.disabled = false;
+            chatInput.focus();
+        };
+
+        function buildPrompt() {
+            var temp = (document.getElementById('temp-value') || {}).textContent || '--';
+            var hum = (document.getElementById('humidity-value') || {}).textContent || '--';
+            var turn = (document.getElementById('turn-status') || {}).textContent || '--';
+            var next = (document.getElementById('next-turn') || {}).textContent || '--';
+
+            var batchesInfo = 'Nenhum lote cadastrado.';
+            try {
+                var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
+                if (b.length > 0) {
+                    var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão' };
+                    batchesInfo = b.map(function(x) {
+                        return '- ' + (names[x.birdType]||x.birdType) + ': ' + x.eggCount + ' ovos, início ' + x.startDate;
+                    }).join('\n');
+                }
+            } catch(e) {}
+
+            return 'Você é o assistente especialista em incubação do IncubadoraPRO.\n' +
+                'Responda sempre em português brasileiro, de forma clara e objetiva.\n' +
+                'Seja útil com dúvidas sobre incubação, temperatura, umidade, viragem, tipos de aves e problemas comuns.\n\n' +
+                'Dados atuais da incubadora:\n' +
+                '- Temperatura: ' + temp + '°C\n' +
+                '- Umidade: ' + hum + '%\n' +
+                '- Status viragem: ' + turn + '\n' +
+                '- Próxima viragem: ' + next + '\n\n' +
+                'Lotes ativos:\n' + batchesInfo + '\n\n' +
+                'Regras:\n' +
+                '- Não invente dados que não foram fornecidos.\n' +
+                '- Se perguntarem algo fora do tema, redirecione para incubação.\n' +
+                '- Use **negrito** para destacar informações importantes.\n' +
+                '- Respostas concisas mas completas.';
+        }
+
+        /* Init */
+        updateApiSection();
+        loadHistory();
+        if (!getApiKey()) {
+            chatBadge.style.display = 'block';
+            addSystemMessage('Configure sua chave API nas Configurações para usar o assistente.');
+        } else {
+            chatBadge.style.display = 'none';
+            if (chatHistory.length === 0) {
+                addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Posso ajudar com dúvidas sobre incubação.');
+            }
+        }
+        renderHistory();
+    })();
+    </script>
+</body>
+</html>
