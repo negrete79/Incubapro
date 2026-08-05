@@ -232,12 +232,11 @@
                 hideTyping();
                 
                 if(!resp.ok){
-                    var errorMsg = 'Erro de conexão com o servidor.';
+                    var errorMsg = 'Erro de conexão. Tente novamente.';
                     try {
                         var errData = await resp.json().catch(function(){ return {}; });
-                        if(resp.status === 401) errorMsg = 'Chave da API inválida.';
+                        if(resp.status === 401) errorMsg = 'Chave inválida.';
                         else if(resp.status === 429) errorMsg = 'Muitas requisições. Aguarde um momento e tente novamente.';
-                        else if(resp.status === 503) errorMsg = 'Servidor lotado. Tente novamente em alguns segundos.';
                         else errorMsg = 'Erro ' + resp.status + ': ' + ((errData.error && errData.message) || 'Tente novamente.');
                     } catch(e) {}
                     addSystemMessage(errorMsg);
@@ -247,12 +246,11 @@
                         appendBubble('assistant', data.choices[0].message.content);
                         playPopSound();
                     } else {
-                        addSystemMessage('Resposta vazia da API. Tente novamente.');
+                        addSystemMessage('Resposta vazia da API.');
                     }
                 }
             }catch(err){
                 hideTyping();
-                // Verifica se é erro de rede (offline)
                 if(err.message.includes('Failed to fetch') || err.name === 'TypeError') {
                     addSystemMessage('Sem conexão com a internet. Verifique e tente novamente.');
                 } else {
@@ -278,7 +276,7 @@
                     for(var i=0; i<b.length; i++) {
                         var x = b[i];
                         var nome = names[x.birdType] || x.birdType;
-                        var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24);
+                        var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24));
                         batchesInfo += '- Lote #' + x.id + ': ' + nome + ', ' + x.eggCount + ' ovos, iniciado há ' + dias + ' dias.\n';
                     }
                 }
