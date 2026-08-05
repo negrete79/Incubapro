@@ -23,28 +23,25 @@ const incubationPeriods = {
     'pheasant': 24
 };
 
+// Variáveis de controle do alarme
+let alarmeJaTocouNestaHora = false;
+let intervaloVerificacaoViragem = null;
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Iniciando IncubadoraPRO...');
     
-    // Verificar se já está instalado
     if (window.matchMedia('(display-mode: standalone)').matches) {
         console.log('📱 App já está instalado');
         document.getElementById('install-btn').style.display = 'none';
     }
     
-    // Carregar dados
     loadData();
-    
-    // Configurar eventos
     setupEventListeners();
-    
-    // Iniciar atualizações
     updateTime();
     updateSensorData();
-    
-    // Configurar PWA
     setupPWA();
+    iniciarVerificacaoViragem(); // Inicia o sistema de alarme real
     
     console.log('✅ Pronto!');
 });
@@ -64,7 +61,6 @@ function loadData() {
 
 // Configurar eventos
 function setupEventListeners() {
-    // Navegação
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const page = btn.dataset.page;
@@ -93,41 +89,137 @@ function updateTime() {
     setInterval(updateClock, 1000);
 }
 
-// Atualizar dados dos sensores
+// Atualizar dados dos sensores (mantém o original sem alterar lógica de viragem)
 function updateSensorData() {
-    // Temperatura
     const temp = (36.5 + Math.random() * 2).toFixed(1);
     document.getElementById('temp-value').textContent = temp;
     document.getElementById('temp-fill').style.width = `${(temp - 36) * 50}%`;
     
-    // Umidade
     const humidity = Math.floor(50 + Math.random() * 10);
     document.getElementById('humidity-value').textContent = humidity;
     document.getElementById('humidity-fill').style.width = `${(humidity - 50) * 10}%`;
     
-    // Próxima viragem
+    // Calcula a próxima viragem (a cada 2 horas, sempre no minuto 00)
     const now = new Date();
     const nextTurn = new Date(now);
     nextTurn.setHours(now.getHours() + 2);
     nextTurn.setMinutes(0);
+    nextTurn.setSeconds(0);
     document.getElementById('next-turn').textContent = nextTurn.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
     
-    // Verificar viragem
-    if (now.getMinutes() === 0 && now.getSeconds() < 5) {
-        document.getElementById('turn-status').textContent = 'Virando...';
-        setTimeout(() => {
-            document.getElementById('turn-status').textContent = 'Aguardando';
-            showNotification('✅ Viragem concluída', 'Os ovos foram virados');
-        }, 3000);
-    }
-    
-    // Repetir a cada 5 segundos
     setTimeout(updateSensorData, 5000);
 }
 
+// ========================================================
+// SISTEMA DE ALARME DE VIRAGEM (NOVO)
+// Verifica a cada 1 segundo se chegou a hora de virar
+// ========================================================
+function iniciarVerificacaoViragem() {
+    // Verifica se o usuário permitiu notificações
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+
+    intervaloVerificacaoViragem = setInterval(() => {
+        const agora = new Date();
+        const minutos = agora.getMinutes();
+        const segundos = agora.getSeconds();
+
+        // A viragem acontece quando o minuto é 00 (ex: 14:00, 16:00, 18:00...)
+        if (minutos === 0 && segundos === 0) {
+            
+            // Garante que o alarme só toque UMA VEZ a cada hora
+            if (!alarmeJaTocouNestaHora) {
+                alarmeJaTocouNestaHora = true;
+                
+                // Atualiza a tela
+                document.getElementById('turn-status').textContent = 'Virando...';
+                
+                // Dispara o alarme
+                dispararAlarmeViragem();
+                
+                // Volta ao normal após 10 segundos
+                setTimeout(() => {
+                    document.getElementById('turn-status').textContent = 'Aguardando';
+                }, 10000);
+            }
+        } 
+        
+        // Reseta a flag quando passar do minuto 00
+        if (minutos !== 0) {
+            alarmeJaTocouNestaHora = false;
+        }
+    }, 1000); // Verifica a cada 1 segundo para não perder o minuto exato
+}
+
+// Dispara o alarme com som e vibração
+function dispararAlarmeViragem() {
+    console.log('🚨 ALARME DE VIRAGEM DISPARADO!');
+    
+    // 1. Vibra o celular (padrão: 2 segundos)
+    if (navigator.vibrate) {
+        // Padrão: vibra 500ms, pausa 300ms, vibra 500ms, pausa 300ms, vibra 500ms
+        navigator.vibrate([500, 300, 500, 300, 500]);
+    }
+
+    // 2. Toca o som de alarme
+    tocarSomAlarme();
+
+    // 3. Dispara notificação do sistema (se permitido)
+    if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+            new Notification('🥚 Hora da Viragem!', {
+                body: 'Está na hora de virar os ovos da incubadora.',
+                icon: 'png192.png',
+                requireInteraction: true // Não some sozinho
+            });
+        } catch (e) {
+            // Em alguns navegadores pode falhar silenciosamente
+        }
+    }
+
+    // 4. Mostra o toast dentro do app
+    showNotification('🚨 Hora da Viragem!', 'Vire os ovos da incubadora agora.');
+}
+
+// Toca um beep de alarme usando Web Audio API (não precisa de arquivo externo)
+function tocarSomAlarme() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        
+        // Cria 3 bips agudos e urgentes
+        for (let i = 0; i < 3; i++) {
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            
+            // Conecta o oscilador no controle de volume
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            // Som agudo e urgente (880Hz)
+            oscillator.frequency.value = 880;
+            oscillator.type = 'sine';
+            
+            // Volume alto
+            gainNode.gain.value = 1.0;
+            
+            // Tempo de início com atraso entre os bips
+            const inicio = ctx.currentTime + (i * 0.6);
+            oscillator.start(inicio);
+            oscillator.stop(inicio + 0.4); // Cada bip dura 0.4 segundos
+        }
+    } catch (e) {
+        console.warn('Não foi possível tocar o som do alarme:', e);
+    }
+}
+
+// ========================================================
+// FIM DO SISTEMA DE ALARME
+// ========================================================
+
 // Configurar PWA
 function setupPWA() {
-    // Registrar Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
             .then(registration => {
@@ -138,14 +230,12 @@ function setupPWA() {
             });
     }
     
-    // Evento de instalação
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
         document.getElementById('install-btn').style.display = 'flex';
     });
     
-    // Botão de instalação
     document.getElementById('install-btn').addEventListener('click', () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -160,7 +250,6 @@ function setupPWA() {
         }
     });
     
-    // App instalado
     window.addEventListener('appinstalled', () => {
         document.getElementById('install-btn').style.display = 'none';
         showNotification('🎉 Instalado', 'App instalado com sucesso!');
@@ -312,13 +401,11 @@ function saveBatch(event) {
     };
     
     if (batchId) {
-        // Editar lote existente
         const index = batches.findIndex(b => b.id == batchId);
         if (index !== -1) {
             batches[index] = { ...batches[index], ...batchData };
         }
     } else {
-        // Adicionar novo lote
         batchData.id = batches.length > 0 ? Math.max(...batches.map(b => b.id)) + 1 : 1;
         batches.push(batchData);
     }
@@ -391,4 +478,4 @@ window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         closeModal();
     }
-}
+            }
