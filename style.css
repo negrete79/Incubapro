@@ -674,7 +674,7 @@ body {
 }
 
 /* ============================================================
-   ASSISTENTE IA - CHAT GROQ (ACESSÍVEL - FONTES GRANDES)
+   ASSISTENTE IA - CHAT GROQ (TELA CHEIA NO CELULAR)
    ============================================================ */
 
 /* Botão flutuante */
@@ -715,29 +715,340 @@ body {
     display: none;
 }
 
-/* Janela do chat - grande e confortável */
+/* Janela do chat - OCUPA TELA INTEIRA NO CELULAR */
 .chat-window {
     position: fixed;
-    bottom: 178px;
-    right: 12px;
-    width: 390px;
-    max-width: calc(100vw - 24px);
-    height: 540px;
-    max-height: calc(100vh - 200px);
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
     background: #1a1a2e;
-    border-radius: 20px;
-    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+    border-radius: 0;
+    box-shadow: none;
     z-index: 10000;
     display: none;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: none;
+}
+
+/* No computador, limita o tamanho e arredonda */
+@media (min-width: 600px) {
+    .chat-window {
+        bottom: 20px;
+        right: 20px;
+        width: 420px;
+        height: 580px;
+        max-width: 420px;
+        max-height: 580px;
+        border-radius: 20px;
+        box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
 }
 
 .chat-window.open {
     display: flex;
 }
 
+/* Cabeçalho do chat */
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #1565C0, #0D47A1);
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-header-left i {
+    font-size: 1.5rem;
+}
+
+.chat-header-left span {
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.chat-close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    opacity: .8;
+    padding: 6px;
+    line-height: 1;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-close-btn:hover {
+    opacity: 1;
+}
+
+/* Área de mensagens */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scrollbar-width: wide;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 7px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+}
+
+/* Bolhas de mensagem */
+.chat-msg {
+    max-width: 88%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    word-wrap: break-word;
+}
+
+.chat-msg-user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #1565C0, #1976D2);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+}
+
+.chat-msg-assistant {
+    align-self: flex-start;
+    background: #2a2a4a;
+    color: #e8e8e8;
+    border-bottom-left-radius: 6px;
+}
+
+.chat-msg-system {
+    align-self: center;
+    background: transparent;
+    color: #aaa;
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 6px 0;
+    max-width: 95%;
+}
+
+/* Indicador de digitação */
+.chat-typing {
+    align-self: flex-start;
+    display: flex;
+    gap: 7px;
+    padding: 16px 22px;
+    background: #2a2a4a;
+    border-radius: 18px;
+    border-bottom-left-radius: 6px;
+}
+
+.chat-typing span {
+    width: 9px;
+    height: 9px;
+    background: #aaa;
+    border-radius: 50%;
+    animation: chatBounce .6s infinite alternate;
+}
+
+.chat-typing span:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.chat-typing span:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes chatBounce {
+    to {
+        transform: translateY(-6px);
+        opacity: .4;
+    }
+}
+
+/* Campo de entrada - grande e acessível */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom)); /* Respeita barra do iPhone */
+    background: #16162a;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    flex-shrink: 0;
+}
+
+.chat-input-area input {
+    flex: 1;
+    background: #2a2a4a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 28px;
+    padding: 14px 20px;
+    color: #fff;
+    font-size: 1.08rem;
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+}
+
+.chat-input-area input::placeholder {
+    color: #777;
+    font-size: 1rem;
+}
+
+.chat-input-area input:focus {
+    border-color: #1565C0;
+}
+
+/* Botão enviar */
+.chat-send-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1565C0, #0D47A1);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.chat-send-btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+/* Botão configurar API no card de configurações */
+.chat-api-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 15px 18px;
+    background: linear-gradient(135deg, #1565C0, #1976D2);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .12s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.chat-api-trigger:active {
+    transform: scale(0.97);
+}
+
+/* ============================================================
+   MODAL DA CHAVE API
+   ============================================================ */
+.api-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.api-modal-overlay.open {
+    display: flex;
+}
+
+.api-modal-box {
+    background: #fff;
+    border-radius: 20px;
+    width: 92%;
+    max-width: 440px;
+    padding: 32px 28px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    animation: modalPop .25s ease;
+}
+
+.api-modal-box h3 {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    color: #1a1a2e;
+}
+
+.api-modal-box p {
+    margin: 0 0 22px;
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.7;
+}
+
+.api-modal-box input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color .2s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.api-modal-box input:focus {
+    border-color: #1565C0;
+}
+
+.api-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+    justify-content: flex-end;
+}
+
+.api-modal-actions button {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.api-cancel-btn {
+    background: #f0f0f0;
+    color: #555;
+}
+
+.api-save-btn {
+    background: linear-gradient(135deg, #1565C0, #0D47A1);
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(21,101,192,0.35);
+}
 /* Cabeçalho do chat */
 .chat-header {
     display: flex;
