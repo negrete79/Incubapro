@@ -101,7 +101,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .footer p { margin-bottom: 10px; }
 .social-links { display: flex; justify-content: center; gap: 18px; }
 .social-links a { color: #bbb; font-size: 1.3rem; }
-.social-links a:hover { color: #1565C0; transform: translateY(-2px); }
+.social-links a:hover { color: #1565C0; }
 
 /* === CHAT GROQ === */
 .chat-fab { position: fixed; bottom: 100px; right: 18px; width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; border: none; box-shadow: 0 4px 18px rgba(21,101,192,0.45); cursor: pointer; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; }
@@ -130,13 +130,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .chat-typing span:nth-child(3) { animation-delay: .3s; }
 @keyframes chatBounce { to { transform: translateY(-6px); opacity: .4; } }
 
-.chat-input-area { display: flex; align-items: center; gap: 10px; padding: 14px 16px; padding-bottom: max(14px, env(safe-area-inset-bottom)); background: #16162a; border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+.chat-input-area { display: flex; align-items: center; gap: 12px; padding: 14px 16px; padding-bottom: max(14px, env(safe-area-inset-bottom)); background: #16162a; border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
 .chat-input-area input { flex: 1; background: #0f0f2a !important; border: 2px solid #3a3a5a !important; border-radius: 28px !important; padding: 16px 20px !important; color: #ffffff !important; font-size: 1.15rem !important; font-weight: 500 !important; outline: none !important; caret-color: #64B5F6 !important; -webkit-appearance: none !important; appearance: none !important; }
-.chat-input-area input::placeholder { color: #7a7a9e !important; font-size: 1rem !important; }
+.chat-input-area input::placeholder { color: #7a7a9e !important; }
 .chat-input-area input:focus { border-color: #1565C0 !important; background: #1a1a3a !important; }
 
-.chat-send-btn { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
-.chat-send-btn:disabled { opacity: .4; cursor: not-allowed; }
+.chat-send-btn { width: 64px; height: 64px; border-radius: 50%; background: #ffffff; color: #1565C0; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 0 0 4px #1565C0, 0 4px 15px rgba(0,0,0,0.5); }
+.chat-send-btn:disabled { background: #cccccc; color: #888888; box-shadow: 0 0 0 4px #cccccc, 0 4px 10px rgba(0,0,0,0.2); }
 
 .chat-api-trigger { display: flex; align-items: center; gap: 12px; width: 100%; padding: 15px 18px; background: linear-gradient(135deg, #1565C0, #1976D2); color: #fff; border: none; border-radius: 10px; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
 
@@ -151,4 +151,3 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .api-modal-actions button { padding: 10px 22px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; }
 .api-cancel-btn { background: #f0f0f0; color: #555; }
 .api-save-btn { background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; box-shadow: 0 3px 12px rgba(21,101,192,0.35); }
-.chat-send-btn { border: 2px solid rgba(255, 255, 255, 0.6) !important; box-shadow: 0 0 15px rgba(21, 101, 192, 0.8) !important; }
