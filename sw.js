@@ -1,80 +1,82 @@
-const CACHE_NAME = 'incubadora-pro-v1.0.0';
-const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './style.css',
-  './app.js',
-  './png192.png',
-  './png512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+const CACHE_NAME = 'incubadora-pro-v1';
+const ASSETS = [
+    './',
+    './index.html',
+    './style.css',
+    './app.js',
+    './png192.png',
+    './png512.png',
+    './manifest.json'
 ];
 
-// Instalação do Service Worker
-self.addEventListener('install', event => {
-  console.log('[SW] Instalando Service Worker...');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[SW] Cacheando arquivos');
-        return cache.addAll(urlsToCache);
-      })
-      .then(() => self.skipWaiting())
-  );
+// Instalar - cacheia os assets principais
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('📦 Cacheando assets...');
+                return cache.addAll(ASSETS);
+            })
+            .then(() => self.skipWaiting())
+            .catch((err) => {
+                console.warn('⚠️ Alguns assets não foram cacheados:', err);
+                return self.skipWaiting();
+            })
+    );
 });
 
-// Ativação do Service Worker
-self.addEventListener('activate', event => {
-  console.log('[SW] Ativando Service Worker...');
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Limpando cache antigo:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  return self.clients.claim();
+// Ativar - limpa cache antigo
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => {
+                        console.log('🗑️ Removendo cache antigo:', name);
+                        return caches.delete(name);
+                    })
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
-// Interceptação de requisições
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
-});
+// Fetch - network first com fallback para cache
+self.addEventListener('fetch', (event) => {
+    // Ignora requisições para a API do Groq (sempre network)
+    if (event.request.url.includes('api.groq.com')) {
+        return;
+    }
 
-// Notificações push
-self.addEventListener('push', event => {
-  if (event.data) {
-    const data = event.data.json();
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: './png192.png',
-      badge: './png192.png',
-      vibrate: [200, 100, 200],
-      data: {
-        url: './index.html'
-      }
-    });
-  }
-});
+    // Ignora requisições non-GET
+    if (event.request.method !== 'GET') {
+        return;
+    }
 
-// Abrir notificação
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url)
-  );
+    event.respondWith(
+        fetch(event.request)
+            .then((response) => {
+                // Se a rede respondeu, clona e salva no cache
+                if (response && response.status === 200) {
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseClone);
+                    });
+                }
+                return response;
+            })
+            .catch(() => {
+                // Se a rede falhou, tenta o cache
+                return caches.match(event.request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    // Se não tem cache e é navegação, retorna o index.html
+                    if (event.request.mode === 'navigate') {
+                        return caches.match('./index.html');
+                    }
+                    return new Response('Offline', { status: 503 });
+                });
+            })
+    );
 });
