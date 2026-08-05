@@ -9,7 +9,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="IncubadoraPRO">
-    
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="png192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="png512.png">
@@ -21,35 +20,16 @@
     
     <div class="app">
         <header class="header">
-            <div class="logo">
-                <i class="fas fa-egg"></i>
-                <h1>Incubadora<span>PRO</span></h1>
-            </div>
-            <div>
-                <button id="install-btn" class="install-btn" style="display: none;">
-                    <i class="fas fa-download"></i> Instalar
-                </button>
-            </div>
+            <div class="logo"><i class="fas fa-egg"></i><h1>Incubadora<span>PRO</span></h1></div>
+            <div><button id="install-btn" class="install-btn" style="display: none;"><i class="fas fa-download"></i> Instalar</button></div>
         </header>
 
-        <div class="status">
-            <span class="status-dot"></span>
-            <span id="connection-status">Online</span>
-        </div>
+        <div class="status"><span class="status-dot"></span><span id="connection-status">Online</span></div>
 
         <nav class="nav">
-            <button class="nav-btn active" data-page="dashboard">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Painel</span>
-            </button>
-            <button class="nav-btn" data-page="batches">
-                <i class="fas fa-egg"></i>
-                <span>Lotes</span>
-            </button>
-            <button class="nav-btn" data-page="settings">
-                <i class="fas fa-cog"></i>
-                <span>Config</span>
-            </button>
+            <button class="nav-btn active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i><span>Painel</span></button>
+            <button class="nav-btn" data-page="batches"><i class="fas fa-egg"></i><span>Lotes</span></button>
+            <button class="nav-btn" data-page="settings"><i class="fas fa-cog"></i><span>Config</span></button>
         </nav>
 
         <div class="content">
@@ -87,29 +67,15 @@
             
             <div id="batches" class="page">
                 <button class="btn" onclick="openBatchModal()"><i class="fas fa-plus"></i> Novo Lote</button>
-                <div id="batches-container">
-                    <div class="empty-state"><i class="fas fa-egg"></i><p>Nenhum lote cadastrado</p></div>
-                </div>
+                <div id="batches-container"><div class="empty-state"><i class="fas fa-egg"></i><p>Nenhum lote cadastrado</p></div></div>
             </div>
             
             <div id="settings" class="page">
                 <div class="card">
                     <div class="card-header"><span>Notificações</span></div>
                     <div class="settings-toggles">
-                        <label class="toggle-label">
-                            <span>Alertas de temperatura</span>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="temp-alerts" checked>
-                                <span class="toggle-slider"></span>
-                            </div>
-                        </label>
-                        <label class="toggle-label">
-                            <span>Lembretes de viragem</span>
-                            <div class="toggle-switch">
-                                <input type="checkbox" id="turn-reminders" checked>
-                                <span class="toggle-slider"></span>
-                            </div>
-                        </label>
+                        <label class="toggle-label"><span>Alertas de temperatura</span><div class="toggle-switch"><input type="checkbox" id="temp-alerts" checked><span class="toggle-slider"></span></div></label>
+                        <label class="toggle-label"><span>Lembretes de viragem</span><div class="toggle-switch"><input type="checkbox" id="turn-reminders" checked><span class="toggle-slider"></span></div></label>
                     </div>
                 </div>
                 <div class="card">
@@ -126,81 +92,46 @@
         <div class="footer">
             <p>Desenvolvido por Elias Costa Negret's</p>
             <div class="social-links">
-                <a href="https://instagram.com" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://youtube.com" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="https://telegram.org" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a href="https://telegram.org" target="_blank"><i class="fab fa-telegram"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- MODAIS DO APP -->
     <div id="batch-modal" class="modal" onclick="if(event.target===this)closeModal()">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Novo Lote</h3>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h3 id="modal-title">Novo Lote</h3><button class="close-btn" onclick="closeModal()">&times;</button></div>
             <form id="batch-form" onsubmit="saveBatch(event)">
                 <input type="hidden" id="batch-id">
-                <div class="form-group">
-                    <label>Tipo de Ave</label>
-                    <select id="bird-type" required>
-                        <option value="">Selecione...</option>
-                        <option value="chicken">🐔 Galinha</option>
-                        <option value="duck">🦆 Pato</option>
-                        <option value="quail">🐦 Codorna</option>
-                        <option value="goose">🪿 Ganso</option>
-                        <option value="swan">🦢 Cisne</option>
-                        <option value="peacock">🦚 Pavão</option>
-                        <option value="pheasant">🐓 Faisão</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Tipo de Ave</label><select id="bird-type" required><option value="">Selecione...</option><option value="chicken">🐔 Galinha</option><option value="duck">🦆 Pato</option><option value="quail">🐦 Codorna</option><option value="goose">🪿 Ganso</option><option value="swan">🦢 Cisne</option><option value="peacock">🦚 Pavão</option><option value="pheasant">🐓 Faisão</option></select></div>
                 <div class="form-group"><label>Data de Início</label><input type="date" id="start-date" required></div>
                 <div class="form-group"><label>Quantidade de Ovos</label><input type="number" id="egg-count" min="1" required></div>
                 <div class="form-group"><label>Observações</label><textarea id="notes" rows="2"></textarea></div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn">Salvar</button>
-                </div>
+                <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn">Salvar</button></div>
             </form>
         </div>
     </div>
     
     <div id="details-modal" class="modal" onclick="if(event.target===this)closeModal()">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Detalhes do Lote</h3>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h3>Detalhes do Lote</h3><button class="close-btn" onclick="closeModal()">&times;</button></div>
             <div id="batch-details-content"></div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button>
-            </div>
+            <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button></div>
         </div>
     </div>
 
-    <!-- ELEMENTOS DO CHAT -->
-    <button class="chat-fab" id="chat-fab" onclick="toggleChatWindow()">
-        <i class="fas fa-comment-dots"></i>
-        <span class="chat-badge-dot" id="chat-badge"></span>
-    </button>
+    <button class="chat-fab" id="chat-fab" onclick="toggleChatWindow()"><i class="fas fa-comment-dots"></i><span class="chat-badge-dot" id="chat-badge"></span></button>
 
     <div class="chat-window" id="chat-window">
         <div class="chat-header">
-            <div class="chat-header-left">
-                <i class="fas fa-robot"></i>
-                <span>Assistente IncubadoraPRO</span>
-            </div>
-            <button class="chat-close-btn" onclick="toggleChatWindow()">
-                <i class="fas fa-times"></i>
-            </button>
+            <div class="chat-header-left"><i class="fas fa-robot"></i><span>Assistente IncubadoraPRO</span></div>
+            <button class="chat-close-btn" onclick="toggleChatWindow()"><i class="fas fa-times"></i></button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-area">
             <input type="text" id="chat-input" placeholder="Digite sua dúvida..." autocomplete="off">
-            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -229,6 +160,7 @@
         document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ if(apiModal.classList.contains('open'))closeApiModal(); else if(chatOpen)toggleChatWindow(); }});
 
         function getApiKey(){ try{return localStorage.getItem(STORAGE_KEY)||'';}catch(e){return '';} }
+        
         function updateApiSection(){
             if(getApiKey()) chatApiSection.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:#2e7d32;font-size:1rem;"><i class="fas fa-check-circle"></i><span>Assistente configurado e ativo</span></div>';
             else chatApiSection.innerHTML='<button class="chat-api-trigger" onclick="openApiModal()"><i class="fas fa-key"></i> Configurar Chave API</button>';
@@ -257,10 +189,28 @@
         function hideTyping(){var el=document.getElementById('typing-ind');if(el)el.remove();}
         function scrollBottom(){requestAnimationFrame(function(){chatMessages.scrollTop=chatMessages.scrollHeight;});}
 
+        // Função do barulhinho
+        function playBeep(freq, dur) {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                var osc = ctx.createOscillator(); var gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.frequency.value = freq; osc.type = 'sine'; gain.gain.value = 0.4;
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + dur);
+            } catch(e) {}
+        }
+
         window.sendChatMessage=async function(){
             var text=chatInput.value.trim(); if(!text||isGenerating)return;
             var apiKey=getApiKey(); if(!apiKey){addSystemMessage('Configure a chave API em Config > Assistente IA.');return;}
-            appendBubble('user',text); chatInput.value=''; isGenerating=true; chatSendBtn.disabled=true; showTyping();
+            
+            appendBubble('user',text); 
+            chatInput.value=''; 
+            isGenerating=true; 
+            chatSendBtn.disabled=true; 
+            showTyping();
+            playBeep(1200, 0.08); // Barulho ao enviar
+
             try{
                 var msgs=[{role:'system', content: buildPrompt()}];
                 var recent=chatHistory.filter(function(m){return m.role==='user'||m.role==='assistant';}).slice(-20);
@@ -268,20 +218,17 @@
                 var resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1024,temperature:0.7})});
                 hideTyping();
                 if(!resp.ok){addSystemMessage(resp.status===401?'Chave inválida.':'Erro na API.');}
-                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content));}
+                else{var data=await resp.json();appendBubble('assistant',(data.choices[0].message.content)); playBeep(800, 0.1);} // Barulho ao receber
             }catch(err){hideTyping();addSystemMessage('Erro de conexão.');}
+            
             isGenerating=false; chatSendBtn.disabled=false; chatInput.focus();
         };
 
         function buildPrompt() {
-            var tempEl = document.getElementById('temp-value');
-            var humEl = document.getElementById('humidity-value');
-            var turnEl = document.getElementById('turn-status');
-            var nextEl = document.getElementById('next-turn');
-            var temp = tempEl ? tempEl.textContent : '--';
-            var hum = humEl ? humEl.textContent : '--';
-            var turn = turnEl ? turnEl.textContent : '--';
-            var next = nextEl ? nextEl.textContent : '--';
+            var temp = document.getElementById('temp-value') ? document.getElementById('temp-value').textContent : '--';
+            var hum = document.getElementById('humidity-value') ? document.getElementById('humidity-value').textContent : '--';
+            var turn = document.getElementById('turn-status') ? document.getElementById('turn-status').textContent : '--';
+            var next = document.getElementById('next-turn') ? document.getElementById('next-turn').textContent : '--';
 
             var batchesInfo = 'Nenhum lote ativo no momento.';
             try {
@@ -298,26 +245,21 @@
                 }
             } catch(e) {}
 
-            return 'Você é o assistente virtual do sistema IncubadoraPRO, um aplicativo profissional para controle de incubadoras e avicultura.\n\n' +
+            return 'Você é o assistente virtual do sistema IncubadoraPRO.\n\n' +
                 'SUA PERSONALIDADE:\n' +
-                '- Se perguntarem "quem é você" ou similar, diga que você é o assistente do IncubadoraPRO, especialista em avicultura.\n' +
-                '- Seja sempre amigável, prestativo e responda em português brasileiro.\n' +
-                '- Use **negrito** para destacar informações importantes.\n\n' +
-                'DADOS ATUAIS DO SISTEMA DO USUÁRIO (LEIA E USE ISSO NAS RESPOSTAS):\n' +
-                '- Temperatura atual: ' + temp + '°C\n' +
-                '- Umidade atual: ' + hum + '%\n' +
-                '- Status da viragem: ' + turn + '\n' +
-                '- Próxima viragem: ' + next + '\n' +
-                '- Lotes ativos:\n' + batchesInfo + '\n\n' +
+                '- Se perguntarem quem é você, diga que é o assistente do IncubadoraPRO.\n' +
+                '- Responda em português brasileiro, de forma amigável.\n' +
+                '- Use **negrito** para destacar informações.\n\n' +
+                'DADOS ATUAIS DO SISTEMA (USE ISSO NAS RESPOSTAS):\n' +
+                '- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\n' +
                 'REGRAS:\n' +
-                '- Você PODE responder sobre qualquer assunto, mas seu foco principal é avicultura, criação de aves, incubação, alimentação e doenças.\n' +
-                '- Quando alguém perguntar sobre o app, who you are, ou status atual, use os dados do sistema que foram fornecidos acima para dar uma resposta exata (ex: "Você tem 1 lote de codorna com 33 ovos").\n' +
-                '- Não invente dados que não foram fornecidos.';
+                '- Responda sobre qualquer assunto, mas foco em avicultura.\n' +
+                '- Se perguntarem sobre o app, use os dados reais acima para responder (ex: diga quantos ovos e de qual ave).';
         }
 
         updateApiSection(); loadHistory();
         if(!getApiKey()){chatBadge.style.display='block';addSystemMessage('Configure a chave API nas Configurações.');}
-        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Pergunte-me sobre seu sistema, avicultura ou qualquer dúvida!');}
+        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Pergunte-me sobre seu sistema ou avicultura!');}
         renderHistory();
     })();
     </script>
