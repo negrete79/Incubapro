@@ -1,32 +1,48 @@
 /* ============================================================
-   RESET E BASE
+   INCUBADORAPRO - STYLE.CSS COMPLETO
    ============================================================ */
-* {
+
+/* ============================================================
+   1. RESET E BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: #f0f2f5;
     color: #1a1a2e;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     overflow-x: hidden;
+    line-height: 1.5;
 }
 
+/* ============================================================
+   2. APP CONTAINER
+   ============================================================ */
 .app {
     max-width: 480px;
     margin: 0 auto;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     background: #f0f2f5;
     position: relative;
     padding-bottom: 20px;
 }
 
 /* ============================================================
-   HEADER
+   3. HEADER
    ============================================================ */
 .header {
     background: linear-gradient(135deg, #1565C0, #0D47A1);
@@ -38,7 +54,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 12px rgba(13,71,161,0.3);
+    box-shadow: 0 2px 12px rgba(13, 71, 161, 0.3);
 }
 
 .logo {
@@ -72,22 +88,22 @@ body {
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     color: #fff;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background .2s;
+    transition: background 0.2s;
 }
 
 .install-btn:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* ============================================================
-   STATUS BAR
+   4. STATUS BAR
    ============================================================ */
 .status {
     display: flex;
@@ -113,7 +129,7 @@ body {
 }
 
 /* ============================================================
-   NAVEGAÇÃO
+   5. NAVEGAÇÃO
    ============================================================ */
 .nav {
     display: flex;
@@ -137,7 +153,7 @@ body {
     font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
-    transition: color .2s;
+    transition: color 0.2s;
     position: relative;
 }
 
@@ -161,7 +177,7 @@ body {
 }
 
 /* ============================================================
-   CONTEÚDO / PÁGINAS
+   6. CONTEÚDO / PÁGINAS
    ============================================================ */
 .content {
     padding: 16px;
@@ -173,7 +189,7 @@ body {
 
 .page.active {
     display: block;
-    animation: pageFade .25s ease;
+    animation: pageFade 0.25s ease;
 }
 
 @keyframes pageFade {
@@ -182,7 +198,7 @@ body {
 }
 
 /* ============================================================
-   RELÓGIO
+   7. RELÓGIO
    ============================================================ */
 .time {
     text-align: center;
@@ -195,14 +211,14 @@ body {
 }
 
 /* ============================================================
-   CARDS
+   8. CARDS
    ============================================================ */
 .card {
     background: #fff;
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .card-header {
@@ -221,7 +237,7 @@ body {
 }
 
 /* ============================================================
-   TEMPERATURA / UMIDADE
+   9. TEMPERATURA / UMIDADE
    ============================================================ */
 .temp-display {
     text-align: center;
@@ -254,7 +270,7 @@ body {
     height: 100%;
     background: linear-gradient(90deg, #4CAF50, #8BC34A);
     border-radius: 8px;
-    transition: width .6s ease;
+    transition: width 0.6s ease;
     width: 0%;
 }
 
@@ -264,7 +280,7 @@ body {
 }
 
 /* ============================================================
-   VIRAGEM / HEARTBEAT
+   10. VIRAGEM / HEARTBEAT
    ============================================================ */
 .heartbeat {
     display: flex;
@@ -289,7 +305,7 @@ body {
 }
 
 /* ============================================================
-   STATUS GRID
+   11. STATUS GRID
    ============================================================ */
 .status-grid {
     display: flex;
@@ -312,7 +328,7 @@ body {
 }
 
 /* ============================================================
-   BOTÕES
+   12. BOTÕES
    ============================================================ */
 .btn {
     display: flex;
@@ -328,7 +344,7 @@ body {
     font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform .12s, box-shadow .12s;
+    transition: transform 0.12s, box-shadow 0.12s;
 }
 
 .btn:active {
@@ -345,7 +361,7 @@ body {
 }
 
 /* ============================================================
-   LOTES
+   13. LOTES
    ============================================================ */
 .empty-state {
     text-align: center;
@@ -368,7 +384,7 @@ body {
     border-radius: 12px;
     padding: 14px;
     margin-bottom: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
     border: 1px solid #f0f0f0;
 }
 
@@ -419,7 +435,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 0.85rem;
-    transition: background .15s, color .15s;
+    transition: background 0.15s, color 0.15s;
 }
 
 .icon-btn:hover {
@@ -436,18 +452,18 @@ body {
 }
 
 /* ============================================================
-   MODAIS
+   14. MODAIS
    ============================================================ */
 .modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    animation: modalBgIn .2s ease;
+    animation: modalBgIn 0.2s ease;
 }
 
 @keyframes modalBgIn {
@@ -463,7 +479,7 @@ body {
     max-height: 85vh;
     overflow-y: auto;
     padding: 24px;
-    animation: modalPop .25s ease;
+    animation: modalPop 0.25s ease;
 }
 
 @keyframes modalPop {
@@ -495,7 +511,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background .15s;
+    transition: background 0.15s;
 }
 
 .close-btn:hover {
@@ -503,7 +519,7 @@ body {
 }
 
 /* ============================================================
-   FORMULÁRIOS
+   15. FORMULÁRIOS
    ============================================================ */
 .form-group {
     margin-bottom: 14px;
@@ -528,8 +544,16 @@ body {
     color: #333;
     background: #fafafa;
     outline: none;
-    transition: border-color .2s, background .2s;
+    transition: border-color 0.2s, background 0.2s;
     -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
 }
 
 .form-group input:focus,
@@ -568,7 +592,7 @@ body {
 }
 
 /* ============================================================
-   DETALHES DO LOTE
+   16. DETALHES DO LOTE
    ============================================================ */
 .batch-details {
     display: flex;
@@ -616,11 +640,11 @@ body {
     height: 100%;
     background: linear-gradient(90deg, #1565C0, #42A5F5);
     border-radius: 10px;
-    transition: width .6s ease;
+    transition: width 0.6s ease;
 }
 
 /* ============================================================
-   NOTIFICAÇÕES TOAST
+   17. NOTIFICAÇÕES TOAST
    ============================================================ */
 .notification {
     position: fixed;
@@ -630,11 +654,11 @@ body {
     background: #fff;
     padding: 14px 22px;
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
     z-index: 99999;
     max-width: 90%;
-    animation: toastIn .3s ease;
-    transition: opacity .3s;
+    animation: toastIn 0.3s ease;
+    transition: opacity 0.3s;
 }
 
 @keyframes toastIn {
@@ -643,7 +667,7 @@ body {
 }
 
 /* ============================================================
-   FOOTER
+   18. FOOTER
    ============================================================ */
 .footer {
     text-align: center;
@@ -665,7 +689,7 @@ body {
 .social-links a {
     color: #bbb;
     font-size: 1.3rem;
-    transition: color .2s, transform .2s;
+    transition: color 0.2s, transform 0.2s;
 }
 
 .social-links a:hover {
@@ -674,10 +698,8 @@ body {
 }
 
 /* ============================================================
-   ASSISTENTE IA - CHAT GROQ (TELA CHEIA NO CELULAR)
+   19. CHAT - BOTÃO FLUTUANTE
    ============================================================ */
-
-/* Botão flutuante */
 .chat-fab {
     position: fixed;
     bottom: 100px;
@@ -688,14 +710,14 @@ body {
     background: linear-gradient(135deg, #1565C0, #0D47A1);
     color: #fff;
     border: none;
-    box-shadow: 0 4px 18px rgba(21,101,192,0.45);
+    box-shadow: 0 4px 18px rgba(21, 101, 192, 0.45);
     cursor: pointer;
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.7rem;
-    transition: transform .2s, box-shadow .2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -715,15 +737,18 @@ body {
     display: none;
 }
 
-/* Janela do chat - OCUPA TELA INTEIRA NO CELULAR */
+/* ============================================================
+   20. CHAT - JANELA (TELA CHEIA NO CELULAR)
+   ============================================================ */
 .chat-window {
     position: fixed;
     bottom: 0;
     right: 0;
     width: 100vw;
     height: 100vh;
+    height: -webkit-fill-available;
     max-width: 100vw;
-    max-height: 100vh;
+    max-height: -webkit-fill-available;
     background: #1a1a2e;
     border-radius: 0;
     box-shadow: none;
@@ -734,7 +759,7 @@ body {
     border: none;
 }
 
-/* No computador, limita o tamanho e arredonda */
+/* No computador: janela flutuante com tamanho limitado */
 @media (min-width: 600px) {
     .chat-window {
         bottom: 20px;
@@ -744,8 +769,8 @@ body {
         max-width: 420px;
         max-height: 580px;
         border-radius: 20px;
-        box-shadow: 0 12px 48px rgba(0,0,0,0.5);
-        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
 }
 
@@ -753,12 +778,16 @@ body {
     display: flex;
 }
 
-/* Cabeçalho do chat */
+/* ============================================================
+   21. CHAT - CABEÇALHO
+   ============================================================ */
 .chat-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
+    /* No iPhone com notch, empurra o conteúdo abaixo da barra de status */
+    padding-top: max(18px, env(safe-area-inset-top));
     background: linear-gradient(135deg, #1565C0, #0D47A1);
     color: #fff;
     flex-shrink: 0;
@@ -785,7 +814,7 @@ body {
     color: #fff;
     font-size: 1.6rem;
     cursor: pointer;
-    opacity: .8;
+    opacity: 0.8;
     padding: 6px;
     line-height: 1;
     min-width: 44px;
@@ -793,34 +822,47 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    transition: background 0.15s;
 }
 
-.chat-close-btn:hover {
+.chat-close-btn:hover,
+.chat-close-btn:active {
+    background: rgba(255, 255, 255, 0.15);
     opacity: 1;
 }
 
-/* Área de mensagens */
+/* ============================================================
+   22. CHAT - ÁREA DE MENSAGENS
+   ============================================================ */
 .chat-messages {
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 14px;
     scrollbar-width: wide;
-    scrollbar-color: rgba(255,255,255,0.2) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .chat-messages::-webkit-scrollbar {
     width: 7px;
 }
 
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 .chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
 }
 
-/* Bolhas de mensagem */
+/* ============================================================
+   23. CHAT - BOLHAS DE MENSAGEM
+   ============================================================ */
 .chat-msg {
     max-width: 88%;
     padding: 14px 18px;
@@ -828,6 +870,7 @@ body {
     font-size: 1.08rem;
     line-height: 1.7;
     word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .chat-msg-user {
@@ -854,7 +897,9 @@ body {
     max-width: 95%;
 }
 
-/* Indicador de digitação */
+/* ============================================================
+   24. CHAT - INDICADOR DE DIGITAÇÃO
+   ============================================================ */
 .chat-typing {
     align-self: flex-start;
     display: flex;
@@ -870,472 +915,40 @@ body {
     height: 9px;
     background: #aaa;
     border-radius: 50%;
-    animation: chatBounce .6s infinite alternate;
+    animation: chatBounce 0.6s infinite alternate;
 }
 
 .chat-typing span:nth-child(2) {
-    animation-delay: .15s;
+    animation-delay: 0.15s;
 }
 
 .chat-typing span:nth-child(3) {
-    animation-delay: .3s;
+    animation-delay: 0.3s;
 }
 
 @keyframes chatBounce {
     to {
         transform: translateY(-6px);
-        opacity: .4;
+        opacity: 0.4;
     }
 }
 
-/* Campo de entrada - grande e acessível */
+/* ============================================================
+   25. CHAT - CAMPO DE ENTRADA
+   ============================================================ */
 .chat-input-area {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 14px 16px;
-    padding-bottom: max(14px, env(safe-area-inset-bottom)); /* Respeita barra do iPhone */
+    /* No iPhone, respeita a barra de navegação inferior */
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
     background: #16162a;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     flex-shrink: 0;
 }
 
 .chat-input-area input {
     flex: 1;
     background: #2a2a4a;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 28px;
-    padding: 14px 20px;
-    color: #fff;
-    font-size: 1.08rem;
-    outline: none;
-    transition: border-color .2s;
-    -webkit-appearance: none;
-}
-
-.chat-input-area input::placeholder {
-    color: #777;
-    font-size: 1rem;
-}
-
-.chat-input-area input:focus {
-    border-color: #1565C0;
-}
-
-/* Botão enviar */
-.chat-send-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #1565C0, #0D47A1);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.15rem;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.chat-send-btn:disabled {
-    opacity: .4;
-    cursor: not-allowed;
-}
-
-/* Botão configurar API no card de configurações */
-.chat-api-trigger {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 15px 18px;
-    background: linear-gradient(135deg, #1565C0, #1976D2);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform .12s, box-shadow .12s;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.chat-api-trigger:active {
-    transform: scale(0.97);
-}
-
-/* ============================================================
-   MODAL DA CHAVE API
-   ============================================================ */
-.api-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 20000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.api-modal-overlay.open {
-    display: flex;
-}
-
-.api-modal-box {
-    background: #fff;
-    border-radius: 20px;
-    width: 92%;
-    max-width: 440px;
-    padding: 32px 28px 24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    animation: modalPop .25s ease;
-}
-
-.api-modal-box h3 {
-    margin: 0 0 8px;
-    font-size: 1.35rem;
-    color: #1a1a2e;
-}
-
-.api-modal-box p {
-    margin: 0 0 22px;
-    font-size: 1rem;
-    color: #666;
-    line-height: 1.7;
-}
-
-.api-modal-box input {
-    width: 100%;
-    padding: 14px 18px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    outline: none;
-    transition: border-color .2s;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-}
-
-.api-modal-box input:focus {
-    border-color: #1565C0;
-}
-
-.api-modal-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 22px;
-    justify-content: flex-end;
-}
-
-.api-modal-actions button {
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.api-cancel-btn {
-    background: #f0f0f0;
-    color: #555;
-}
-
-.api-save-btn {
-    background: linear-gradient(135deg, #1565C0, #0D47A1);
-    color: #fff;
-    box-shadow: 0 3px 12px rgba(21,101,192,0.35);
-}
-/* Cabeçalho do chat */
-.chat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 20px;
-    background: linear-gradient(135deg, #1565C0, #0D47A1);
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.chat-header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.chat-header-left i {
-    font-size: 1.5rem;
-}
-
-.chat-header-left span {
-    font-weight: 700;
-    font-size: 1.15rem;
-}
-
-.chat-close-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.6rem;
-    cursor: pointer;
-    opacity: .8;
-    padding: 6px;
-    line-height: 1;
-}
-
-.chat-close-btn:hover {
-    opacity: 1;
-}
-
-/* Área de mensagens */
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    scrollbar-width: wide;
-    scrollbar-color: rgba(255,255,255,0.2) transparent;
-}
-
-.chat-messages::-webkit-scrollbar {
-    width: 7px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-}
-
-/* Bolhas de mensagem - fontes grandes */
-.chat-msg {
-    max-width: 88%;
-    padding: 14px 18px;
-    border-radius: 18px;
-    font-size: 1.08rem;
-    line-height: 1.7;
-    word-wrap: break-word;
-}
-
-.chat-msg-user {
-    align-self: flex-end;
-    background: linear-gradient(135deg, #1565C0, #1976D2);
-    color: #fff;
-    border-bottom-right-radius: 6px;
-}
-
-.chat-msg-assistant {
-    align-self: flex-start;
-    background: #2a2a4a;
-    color: #e8e8e8;
-    border-bottom-left-radius: 6px;
-}
-
-.chat-msg-system {
-    align-self: center;
-    background: transparent;
-    color: #aaa;
-    font-size: 0.95rem;
-    text-align: center;
-    padding: 6px 0;
-    max-width: 95%;
-}
-
-/* Indicador de digitação */
-.chat-typing {
-    align-self: flex-start;
-    display: flex;
-    gap: 7px;
-    padding: 16px 22px;
-    background: #2a2a4a;
-    border-radius: 18px;
-    border-bottom-left-radius: 6px;
-}
-
-.chat-typing span {
-    width: 9px;
-    height: 9px;
-    background: #aaa;
-    border-radius: 50%;
-    animation: chatBounce .6s infinite alternate;
-}
-
-.chat-typing span:nth-child(2) {
-    animation-delay: .15s;
-}
-
-.chat-typing span:nth-child(3) {
-    animation-delay: .3s;
-}
-
-@keyframes chatBounce {
-    to {
-        transform: translateY(-6px);
-        opacity: .4;
-    }
-}
-
-/* Campo de entrada - grande e acessível */
-.chat-input-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    background: #16162a;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    flex-shrink: 0;
-}
-
-.chat-input-area input {
-    flex: 1;
-    background: #2a2a4a;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 28px;
-    padding: 14px 20px;
-    color: #fff;
-    font-size: 1.08rem;
-    outline: none;
-    transition: border-color .2s;
-    -webkit-appearance: none;
-}
-
-.chat-input-area input::placeholder {
-    color: #777;
-    font-size: 1rem;
-}
-
-.chat-input-area input:focus {
-    border-color: #1565C0;
-}
-
-/* Botão enviar - grande */
-.chat-send-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #1565C0, #0D47A1);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.15rem;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.chat-send-btn:disabled {
-    opacity: .4;
-    cursor: not-allowed;
-}
-
-/* Botão configurar API no card de configurações */
-.chat-api-trigger {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 15px 18px;
-    background: linear-gradient(135deg, #1565C0, #1976D2);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform .12s, box-shadow .12s;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.chat-api-trigger:active {
-    transform: scale(0.97);
-}
-
-/* ============================================================
-   MODAL DA CHAVE API - ACESSÍVEL (FONTES GRANDES)
-   ============================================================ */
-.api-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 20000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.api-modal-overlay.open {
-    display: flex;
-}
-
-.api-modal-box {
-    background: #fff;
-    border-radius: 20px;
-    width: 92%;
-    max-width: 440px;
-    padding: 32px 28px 24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    animation: modalPop .25s ease;
-}
-
-.api-modal-box h3 {
-    margin: 0 0 8px;
-    font-size: 1.35rem;
-    color: #1a1a2e;
-}
-
-.api-modal-box p {
-    margin: 0 0 22px;
-    font-size: 1rem;
-    color: #666;
-    line-height: 1.7;
-}
-
-.api-modal-box input {
-    width: 100%;
-    padding: 14px 18px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    outline: none;
-    transition: border-color .2s;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-}
-
-.api-modal-box input:focus {
-    border-color: #1565C0;
-}
-
-.api-modal-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 22px;
-    justify-content: flex-end;
-}
-
-.api-modal-actions button {
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.api-cancel-btn {
-    background: #f0f0f0;
-    color: #555;
-}
-
-.api-save-btn {
-    background: linear-gradient(135deg, #1565C0, #0D47A1);
-    color: #fff;
-    box-shadow: 0 3px 12px rgba(21,101,192,0.35);
-}
+    border: 1px solid r
