@@ -319,4 +319,21 @@
 
             return 'Você é o assistente virtual do sistema IncubadoraPRO.\n\n' +
                 'SUA PERSONALIDADE:\n' +
-                '- Se perguntarem quem é você, diga que é o assistente
+                '- Se perguntarem quem é você, diga que é o assistente do IncubadoraPRO.\n' +
+                '- Responda em português brasileiro, de forma amigável.\n' +
+                '- Use **negrito** para destacar informações.\n\n' +
+                'DADOS ATUAIS DO SISTEMA (USE ISSO NAS RESPOSTAS):\n' +
+                '- Temperatura: ' + temp + '°C\n- Umidade: ' + hum + '%\n- Viragem: ' + turn + '\n- Próxima: ' + next + '\n- Lotes ativos:\n' + batchesInfo + '\n\n' +
+                'REGRAS:\n' +
+                '- Responda sobre qualquer assunto, mas foco em avicultura.\n' +
+                '- Se perguntarem sobre o app, use os dados reais acima para responder (ex: diga quantos ovos e de qual ave).';
+        }
+
+        updateApiSection(); loadHistory();
+        if(!getApiKey()){chatBadge.style.display='block';addSystemMessage('Configure a chave API nas Configurações.');}
+        else if(chatHistory.length===0){addSystemMessage('Olá! Sou o assistente da IncubadoraPRO. Pergunte-me sobre seu sistema ou avicultura!');}
+        renderHistory();
+    })();
+    </script>
+</body>
+</html>
