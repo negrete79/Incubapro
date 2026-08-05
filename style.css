@@ -151,3 +151,4 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .api-modal-actions button { padding: 10px 22px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; }
 .api-cancel-btn { background: #f0f0f0; color: #555; }
 .api-save-btn { background: linear-gradient(135deg, #1565C0, #0D47A1); color: #fff; box-shadow: 0 3px 12px rgba(21,101,192,0.35); }
+.chat-send-btn { border: 2px solid rgba(255, 255, 255, 0.6) !important; box-shadow: 0 0 15px rgba(21, 101, 192, 0.8) !important; }
