@@ -3,12 +3,14 @@ let deferredPrompt = null;
 
 const birdTypeNames = { 
     'chicken': 'Galinha', 'duck': 'Pato', 'quail': 'Codorna', 
-    'goose': 'Ganso', 'swan': 'Cisne', 'peacock': 'Pavão', 'pheasant': 'Faisão' 
+    'goose': 'Ganso', 'swan': 'Cisne', 'peacock': 'Pavão', 'pheasant': 'Faisão',
+    'cockatiel': 'Calopsita' 
 };
 
 const incubationPeriods = { 
     'chicken': 21, 'duck': 28, 'quail': 17, 'goose': 30, 
-    'swan': 35, 'peacock': 28, 'pheasant': 24 
+    'swan': 35, 'peacock': 28, 'pheasant': 24,
+    'cockatiel': 20 
 };
 
 let alarmeJaTocouNestaHora = false;
@@ -32,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // CÁLCULO DE DATAS (CORRIGIDO DEFINITIVAMENTE)
 // ==========================================
 function getLocalDate(dateStr) {
-    // Força o JavaScript a ler a data no fuso horário local, evitando bugs de meia-noite/UTC
     if (!dateStr) return new Date();
     const parts = dateStr.split('-');
     return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
@@ -40,10 +41,10 @@ function getLocalDate(dateStr) {
 
 function getDaysDiff(dateStr) {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Zera a hora de hoje
+    today.setHours(0, 0, 0, 0);
     
     const startDate = getLocalDate(dateStr);
-    startDate.setHours(0, 0, 0, 0); // Zera a hora da data inicial
+    startDate.setHours(0, 0, 0, 0);
     
     const diffMs = today - startDate;
     return Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -192,7 +193,7 @@ function renderBatches() {
     }
 
     container.innerHTML = batches.map(batch => {
-        const days = getDaysDiff(batch.startDate); // Usando a função corrigida
+        const days = getDaysDiff(batch.startDate);
         const incubationDays = incubationPeriods[batch.birdType] || 21;
         const progress = Math.min(100, (days / incubationDays) * 100);
         const status = days < incubationDays ? 'Ativo' : 'Concluído';
@@ -204,7 +205,7 @@ function renderBatches() {
                     <div class="batch-status">${status}</div>
                 </div>
                 <div class="batch-info">
-                    <div>🐔 ${birdTypeNames[batch.birdType]} - ${batch.eggCount} ovos</div>
+                    <div>🦜 ${birdTypeNames[batch.birdType]} - ${batch.eggCount} ovos</div>
                     <div>📅 Início: ${getLocalDate(batch.startDate).toLocaleDateString('pt-BR')}</div>
                     <div>📊 Progresso: ${progress.toFixed(0)}% (Dia ${days})</div>
                 </div>
@@ -222,7 +223,6 @@ function openBatchModal() {
     document.getElementById('batch-form').reset();
     document.getElementById('batch-id').value = '';
     
-    // Preenche a data de hoje automaticamente no formato YYYY-MM-DD
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -242,7 +242,7 @@ function viewBatchDetails(id) {
     const batch = batches.find(b => b.id === id);
     if (!batch) return;
 
-    const days = getDaysDiff(batch.startDate); // Usando a função corrigida
+    const days = getDaysDiff(batch.startDate);
     const incubationDays = incubationPeriods[batch.birdType] || 21;
     const progress = Math.min(100, (days / incubationDays) * 100);
     
