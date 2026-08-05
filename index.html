@@ -159,7 +159,7 @@
                     </div>
                 </div>
 
-                <!-- Card do Assistente IA -->
+                <!-- Assistente IA -->
                 <div class="card">
                     <div class="card-header">
                         <span>Assistente IA</span>
@@ -293,26 +293,25 @@
     <!-- JavaScript principal -->
     <script src="app.js"></script>
 
-    <!-- Script do Chat (isolado, carrega depois do app.js) -->
+    <!-- Script do Chat Groq (isolado) -->
     <script>
     (function() {
-        let chatOpen = false;
-        let chatHistory = [];
-        let isGenerating = false;
-        const STORAGE_KEY = 'incubadora_groq_api_key';
-        const CHAT_HISTORY_KEY = 'incubadora_chat_history';
+        var chatOpen = false;
+        var chatHistory = [];
+        var isGenerating = false;
+        var STORAGE_KEY = 'incubadora_groq_api_key';
+        var CHAT_HISTORY_KEY = 'incubadora_chat_history';
 
-        const fab = document.getElementById('chat-fab');
-        const chatWindow = document.getElementById('chat-window');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatSendBtn = document.getElementById('chat-send-btn');
-        const chatBadge = document.getElementById('chat-badge');
-        const apiModal = document.getElementById('api-modal');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const chatApiSection = document.getElementById('chat-api-section');
+        var fab = document.getElementById('chat-fab');
+        var chatWindow = document.getElementById('chat-window');
+        var chatMessages = document.getElementById('chat-messages');
+        var chatInput = document.getElementById('chat-input');
+        var chatSendBtn = document.getElementById('chat-send-btn');
+        var chatBadge = document.getElementById('chat-badge');
+        var apiModal = document.getElementById('api-modal');
+        var apiKeyInput = document.getElementById('api-key-input');
+        var chatApiSection = document.getElementById('chat-api-section');
 
-        /* Enter para enviar */
         chatInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -320,12 +319,10 @@
             }
         });
 
-        /* Fechar modal API ao clicar fora */
         apiModal.addEventListener('click', function(e) {
             if (e.target === apiModal) closeApiModal();
         });
 
-        /* Escape fecha */
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 if (apiModal.classList.contains('open')) closeApiModal();
@@ -525,10 +522,14 @@
         };
 
         function buildPrompt() {
-            var temp = (document.getElementById('temp-value') || {}).textContent || '--';
-            var hum = (document.getElementById('humidity-value') || {}).textContent || '--';
-            var turn = (document.getElementById('turn-status') || {}).textContent || '--';
-            var next = (document.getElementById('next-turn') || {}).textContent || '--';
+            var tempEl = document.getElementById('temp-value');
+            var humEl = document.getElementById('humidity-value');
+            var turnEl = document.getElementById('turn-status');
+            var nextEl = document.getElementById('next-turn');
+            var temp = tempEl ? tempEl.textContent : '--';
+            var hum = humEl ? humEl.textContent : '--';
+            var turn = turnEl ? turnEl.textContent : '--';
+            var next = nextEl ? nextEl.textContent : '--';
 
             var batchesInfo = 'Nenhum lote cadastrado.';
             try {
@@ -557,7 +558,7 @@
                 '- Respostas concisas mas completas.';
         }
 
-        /* Init */
+        /* Inicialização */
         updateApiSection();
         loadHistory();
         if (!getApiKey()) {
