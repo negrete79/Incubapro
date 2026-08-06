@@ -123,7 +123,21 @@
             <div class="modal-header"><h3 id="modal-title">Novo Lote</h3><button class="close-btn" onclick="closeModal()">&times;</button></div>
             <form id="batch-form" onsubmit="saveBatch(event)">
                 <input type="hidden" id="batch-id">
-                <div class="form-group"><label>Tipo de Ave</label><select id="bird-type" required><option value="">Selecione...</option><option value="chicken">🐔 Galinha</option><option value="duck">🦆 Pato</option><option value="quail">🐦 Codorna</option><option value="goose">🪿 Ganso</option><option value="swan">🦢 Cisne</option><option value="peacock">🦚 Pavão</option><option value="pheasant">🐓 Faisão</option><option value="cockatiel">🦜 Calopsita</option></select></div>
+                <div class="form-group">
+                    <label>Tipo de Ave</label>
+                    <select id="bird-type" required>
+                        <option value="">Selecione...</option>
+                        <option value="chicken">🐔 Galinha</option>
+                        <option value="duck">🦆 Pato</option>
+                        <option value="quail">🐦 Codorna</option>
+                        <option value="goose">🪿 Ganso</option>
+                        <option value="swan">🦢 Cisne</option>
+                        <option value="peacock">🦚 Pavão</option>
+                        <option value="pheasant">🐓 Faisão</option>
+                        <option value="cockatiel">🦜 Calopsita</option>
+                        <option value="turkey">🦃 Peru</option>
+                    </select>
+                </div>
                 <div class="form-group"><label>Data de Início</label><input type="date" id="start-date" required></div>
                 <div class="form-group"><label>Quantidade de Ovos</label><input type="number" id="egg-count" min="1" required></div>
                 <div class="form-group"><label>Observações</label><textarea id="notes" rows="2"></textarea></div>
@@ -211,7 +225,6 @@
             playChatGPTSend();
         };
 
-        // Função global para o botão "Dar como Feita" da ovoscopia
         window.markOvoscopiaDone = function(batchId, day) {
             try {
                 var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
@@ -290,7 +303,7 @@
             try {
                 var b = JSON.parse(localStorage.getItem('incubadora-batches') || '[]');
                 if (b.length > 0) {
-                    var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão', cockatiel:'Calopsita' };
+                    var names = { chicken:'Galinha', duck:'Pato', quail:'Codorna', goose:'Ganso', swan:'Cisne', peacock:'Pavão', pheasant:'Faisão', cockatiel:'Calopsita', turkey:'Peru' };
                     batchesInfo = '';
                     for(var i=0; i<b.length; i++) {
                         var x = b[i]; var nome = names[x.birdType] || x.birdType;
