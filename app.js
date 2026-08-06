@@ -4,12 +4,12 @@ let deferredPrompt = null;
 const birdTypeNames = { 
     'chicken': 'Galinha', 'duck': 'Pato', 'quail': 'Codorna', 
     'goose': 'Ganso', 'swan': 'Cisne', 'peacock': 'Pavão', 'pheasant': 'Faisão',
-    'cockatiel': 'Calopsita' 
+    'cockatiel': 'Calopsita', 'turkey': 'Peru' 
 };
 
 const incubationPeriods = { 
     'chicken': 21, 'duck': 28, 'quail': 17, 'goose': 30, 
-    'swan': 35, 'peacock': 28, 'pheasant': 24, 'cockatiel': 20 
+    'swan': 35, 'peacock': 28, 'pheasant': 24, 'cockatiel': 20, 'turkey': 28 
 };
 
 // NOVO: Tabela de dias ideais para ovoscopia por ave
@@ -21,7 +21,8 @@ const ovoscopiaDays = {
     'swan': [7, 18, 32],
     'peacock': [7, 14, 25],
     'pheasant': [7, 14, 21],
-    'cockatiel': [5, 10, 17]
+    'cockatiel': [5, 10, 17],
+    'turkey': [7, 14, 25]
 };
 
 let alarmeJaTocouNestaHora = false;
