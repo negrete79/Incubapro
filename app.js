@@ -12,7 +12,6 @@ const incubationPeriods = {
     'swan': 35, 'peacock': 28, 'pheasant': 24, 'cockatiel': 20, 'turkey': 28 
 };
 
-// NOVO: Tabela de dias ideais para ovoscopia por ave
 const ovoscopiaDays = {
     'chicken': [7, 14, 18],
     'duck': [7, 14, 25],
@@ -28,9 +27,6 @@ const ovoscopiaDays = {
 let alarmeJaTocouNestaHora = false;
 let ovoscopiaJaVerificadaHoje = false;
 
-// ==========================================
-// INICIALIZAÇÃO
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
         document.getElementById('install-btn').style.display = 'none';
@@ -41,12 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSensorData();
     setupPWA();
     iniciarVerificacaoViragem();
-    iniciarVerificacaoOvoscopia(); // NOVO
+    iniciarVerificacaoOvoscopia();
 });
 
-// ==========================================
-// CÁLCULO DE DATAS
-// ==========================================
 function getLocalDate(dateStr) {
     if (!dateStr) return new Date();
     const parts = dateStr.split('-');
@@ -62,9 +55,6 @@ function getDaysDiff(dateStr) {
     return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
 
-// ==========================================
-// DADOS E NAVEGAÇÃO
-// ==========================================
 function loadData() {
     try {
         const saved = localStorage.getItem('incubadora-batches');
@@ -86,9 +76,6 @@ function navigateToPage(pageId) {
     document.getElementById(pageId).classList.add('active');
 }
 
-// ==========================================
-// RELÓGIO E SENSORES SIMULADOS
-// ==========================================
 function updateTime() {
     const updateClock = () => { document.getElementById('current-time').textContent = new Date().toLocaleTimeString('pt-BR'); };
     updateClock(); setInterval(updateClock, 1000);
@@ -106,9 +93,6 @@ function updateSensorData() {
     setTimeout(updateSensorData, 5000);
 }
 
-// ==========================================
-// ALARME DE VIRAGEM
-// ==========================================
 function iniciarVerificacaoViragem() {
     if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
     setInterval(() => {
@@ -128,14 +112,10 @@ function iniciarVerificacaoViragem() {
     }, 1000);
 }
 
-// ==========================================
-// NOVO: SISTEMA DE ALARME DE OVOSCOPIA
-// ==========================================
 function iniciarVerificacaoOvoscopia() {
-    // Verifica a cada 30 minutos para não sobrecarregar
     setInterval(() => {
         const hoje = new Date();
-        if (hoje.getHours() === 8 && !ovoscopiaJaVerificadaHoje) { // Dispara às 8h da manhã
+        if (hoje.getHours() === 8 && !ovoscopiaJaVerificadaHoje) {
             ovoscopiaJaVerificadaHoje = true;
             verificarAlertasOvoscopia();
         }
@@ -148,13 +128,11 @@ function verificarAlertasOvoscopia() {
         const days = getDaysDiff(batch.startDate);
         const diasParaOvoscopia = ovoscopiaDays[batch.birdType] || [7, 14, 18];
         
-        // Verifica se hoje é um dos dias de ovoscopia
         if (diasParaOvoscopia.includes(days)) {
             if (!batch.ovoscopiaDone || !batch.ovoscopiaDone.includes(days)) {
                 
-                if (navigator.vibrate) navigator.vibrate([1000, 500, 1000]); // Vibração diferente da viragem
+                if (navigator.vibrate) navigator.vibrate([1000, 500, 1000]);
                 
-                // Som agudo e longo de alerta
                 try {
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator(); const gain = ctx.createGain();
@@ -170,7 +148,6 @@ function verificarAlertasOvoscopia() {
                     try { new Notification('🔍 Ovoscopia Hoje!', { body: msg, icon: 'png192.png', requireInteraction: true }); } catch(e) {}
                 }
 
-                // Notificação com botão para dar como feita
                 const n = document.createElement('div'); n.className = 'notification';
                 n.innerHTML = `<div style="font-weight:600;margin-bottom:0.3rem;">🔍 Ovoscopia Pendente</div>
                               <div style="font-size:0.9rem;color:#666;">${msg}</div>
@@ -182,9 +159,6 @@ function verificarAlertasOvoscopia() {
     });
 }
 
-// ==========================================
-// PWA (INSTALAÇÃO)
-// ==========================================
 function setupPWA() {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(e => {});
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('install-btn').style.display = 'flex'; });
@@ -192,9 +166,6 @@ function setupPWA() {
     window.addEventListener('appinstalled', () => { document.getElementById('install-btn').style.display = 'none'; showNotification('🎉 Instalado', 'App instalado com sucesso!'); });
 }
 
-// ==========================================
-// LOTES
-// ==========================================
 function renderBatches() {
     const container = document.getElementById('batches-container');
     if (batches.length === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-egg"></i><p>Nenhum lote cadastrado</p></div>'; return; }
@@ -243,7 +214,6 @@ function viewBatchDetails(id) {
     const progress = Math.min(100, (days / incubationDays) * 100);
     const hatchDate = getLocalDate(batch.startDate); hatchDate.setDate(hatchDate.getDate() + incubationDays);
     
-    // NOVO: Calcula e mostra o status da ovoscopia nos detalhes
     const diasOvoscopia = ovoscopiaDays[batch.birdType] || [7, 14, 18];
     let ovoscopiaHtml = '<div style="margin-top:15px; padding-top:15px; border-top:1px solid #eee;"><strong>🔍 Dias de Ovoscopia:</strong><ul style="margin:5px 0 0 20px; padding:0; list-style:none;">';
     
@@ -313,9 +283,6 @@ function deleteBatch(id) {
     }
 }
 
-// ==========================================
-// LIMPEZA E NOTIFICAÇÕES
-// ==========================================
 function clearData() {
     if (confirm('Tem certeza que deseja limpar todos os dados? Isso exclui os lotes, mas mantém a chave da IA e o chat.')) {
         var apiKey = localStorage.getItem('incubadora_groq_api_key');
