@@ -294,7 +294,9 @@
                     batchesInfo = '';
                     for(var i=0; i<b.length; i++) {
                         var x = b[i]; var nome = names[x.birdType] || x.birdType;
-                        var dias = Math.floor((new Date() - new Date(x.startDate)) / (1000*60*60*24));
+                        var hojeC = new Date(); hojeC.setHours(12,0,0,0);
+                        var inicioC = new Date(x.startDate + 'T12:00:00');
+                        var dias = Math.floor((hojeC - inicioC) / (1000*60*60*24));
                         batchesInfo += '- Lote #' + x.id + ': ' + nome + ', ' + x.eggCount + ' ovos, iniciado há ' + dias + ' dias.\n';
                     }
                 }
